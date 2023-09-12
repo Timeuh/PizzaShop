@@ -16,6 +16,11 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
         return $this->hasMany(Item::class, 'commande_id');
     }
 
+    /**
+     * Convertis l'entité en DTO
+     *
+     * @return CommandeDTO le DTO représentant l'entité
+     */
     public function toDTO(): CommandeDTO {
         return new CommandeDTO(
             $this->id,
