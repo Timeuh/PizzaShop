@@ -10,7 +10,7 @@ use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 class ServiceCommande implements ICommander {
 
 
-    public function creercommande(CommandeDTO $commande): CommandeDTO {
+    public function creerCommande(CommandeDTO $commande): CommandeDTO {
         // TODO: Implement creercommande() method.
     }
 
