@@ -1,6 +1,6 @@
 <?php
 
-namespace pizzashop\shop\domain\entities\catalogue;
+namespace pizzashop\shop\domain\entities\commande;
 
 class Item extends \Illuminate\Database\Eloquent\Model
 {

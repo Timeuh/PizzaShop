@@ -67,7 +67,7 @@ class ServiceCommandeTest extends \PHPUnit\Framework\TestCase {
             self::$commandeIds[] = $commande->id;
 
             /**
-             * des items
+             * des item
              */
             $nbItems = self::$faker->numberBetween(1, 5);
             for ($j = 0; $j < 3; $j++) {
