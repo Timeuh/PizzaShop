@@ -29,11 +29,11 @@ class ServiceCommande implements ICommander {
         );
     }
 
-    public function creercommande(CommandeDTO $commande): void {
+    public function creercommande(CommandeDTO $commande): CommandeDTO {
         // TODO: Implement creercommande() method.
     }
 
-    public function validerCommande(string $id): void {
+    public function validerCommande(string $id): CommandeDTO {
         // TODO: Implement validerCommande() method.
     }
 
