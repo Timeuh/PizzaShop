@@ -8,6 +8,6 @@ interface ICommander
 {
     public function creercommande(CommandeDTO $commande): CommandeDTO;
     public function validerCommande(String $id): CommandeDTO;
-    public function getCommande(String $id): CommandeDTO;
+    public function accederCommande(String $id): CommandeDTO;
 
 }

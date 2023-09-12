@@ -37,7 +37,7 @@ class ServiceCommande implements ICommander {
         // TODO: Implement validerCommande() method.
     }
 
-    public function getCommande(string $id): CommandeDTO {
+    public function accederCommande(string $id): CommandeDTO {
         // TODO: Implement getCommande() method.
     }
 }
