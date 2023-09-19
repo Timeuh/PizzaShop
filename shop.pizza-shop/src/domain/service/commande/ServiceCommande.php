@@ -5,6 +5,7 @@ namespace pizzashop\shop\domain\service\commande;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\shop\domain\dto\commande\CommandeDTO;
 use pizzashop\shop\domain\entities\commande\Commande;
+use pizzashop\shop\domain\entities\commande\EtatCommande;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 
@@ -32,11 +33,11 @@ class ServiceCommande implements ICommander {
         try {
             $commande = Commande::findOrFail($id);
 
-            if ($commande->etat >= 2) {
+            if ($commande->etat >= EtatCommande::ETAT_VALIDE) {
                 throw new MauvaisEtatCommandeException($id);
             }
 
-            $commande->etat = 2;
+            $commande->update(['etat' => EtatCommande::ETAT_VALIDE]);
         } catch (ModelNotFoundException $e)  {
             throw new CommandeNonTrouveeException($id);
         }
