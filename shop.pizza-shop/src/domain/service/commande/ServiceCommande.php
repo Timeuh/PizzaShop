@@ -5,6 +5,7 @@ namespace pizzashop\shop\domain\service\commande;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\shop\domain\dto\commande\CommandeDTO;
 use pizzashop\shop\domain\entities\commande\Commande;
+use pizzashop\shop\domain\entities\commande\EtatCommande;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use Psr\Log\LoggerInterface;
@@ -38,13 +39,13 @@ class ServiceCommande implements ICommander {
         try {
             $commande = Commande::findOrFail($id);
 
-            if ($commande->etat >= 2) {
+            if ($commande->etat >= EtatCommande::ETAT_VALIDE) {
                 $this->logger->error('Erreur de validation : impossible de valider la commande '.$id.
-                    ' : Cette commande est déjà validée.');
+                  ' : Cette commande est déjà validée.');
                 throw new MauvaisEtatCommandeException($id);
             }
 
-            $commande->etat = 2;
+            $commande->update(['etat' => EtatCommande::ETAT_VALIDE]);
             $this->logger->info('Etat Commande : la commande '.$id.' est désormais validée.');
         } catch (ModelNotFoundException $e)  {
             $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.

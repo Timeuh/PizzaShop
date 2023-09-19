@@ -34,3 +34,8 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
         );
     }
 }
+
+enum EtatCommande {
+    const ETAT_CREE = 1;
+    const ETAT_VALIDE = 2;
+}
