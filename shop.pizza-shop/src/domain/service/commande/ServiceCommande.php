@@ -29,7 +29,18 @@ class ServiceCommande implements ICommander {
      * @throws MauvaisEtatCommandeException si la commande est déjà validée ou plus
      */
     public function validerCommande(string $id): CommandeDTO {
-        // TODO: Implement validerCommande() method.
+        try {
+            $commande = Commande::findOrFail($id);
+
+            if ($commande->etat >= 2) {
+                throw new MauvaisEtatCommandeException($id);
+            }
+
+            $commande->etat = 2;
+        } catch (ModelNotFoundException $e)  {
+            throw new CommandeNonTrouveeException($id);
+        }
+        return $commande->toDTO();
     }
 
     /**
