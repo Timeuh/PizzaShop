@@ -11,7 +11,7 @@ class Produit extends \Illuminate\database\eloquent\Model
     protected $table = 'produit';
     protected $primaryKey = 'id';
     public $timestamps = false;
-    protected $fillable = ['numero', 'libelle', 'description','image'];
+    protected $fillable = ['numero', 'libelle', 'description', 'image'];
 
     public function categorie(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -24,7 +24,16 @@ class Produit extends \Illuminate\database\eloquent\Model
             ->withPivot('tarif');
     }
 
-
+    public function toDTO():ProduitDTO
+    {
+        return new ProduitDTO(
+            $this->numero,
+            $this->libelle,
+            $this->categorie->libelle,
+            $this->tailles->libelle,
+            $this->tailles->tarif
+        );
+    }
 
 
 }

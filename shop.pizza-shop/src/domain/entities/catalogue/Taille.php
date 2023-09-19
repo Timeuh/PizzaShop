@@ -16,4 +16,7 @@ class Taille extends \Illuminate\Database\Eloquent\Model
         return $this->belongsToMany(Produit::class, 'tarif', 'taille_id', 'produit_id');
     }
 
+    public function toDTO(){
+
+    }
 }
