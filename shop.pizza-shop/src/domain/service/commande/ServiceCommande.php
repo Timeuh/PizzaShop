@@ -8,8 +8,14 @@ use pizzashop\shop\domain\entities\commande\Commande;
 use pizzashop\shop\domain\entities\commande\EtatCommande;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
+use Psr\Log\LoggerInterface;
 
 class ServiceCommande implements ICommander {
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
 
     /**
      * Crée une commande dans la base de données
@@ -34,11 +40,16 @@ class ServiceCommande implements ICommander {
             $commande = Commande::findOrFail($id);
 
             if ($commande->etat >= EtatCommande::ETAT_VALIDE) {
+                $this->logger->error('Erreur de validation : impossible de valider la commande '.$id.
+                  ' : Cette commande est déjà validée.');
                 throw new MauvaisEtatCommandeException($id);
             }
 
             $commande->update(['etat' => EtatCommande::ETAT_VALIDE]);
+            $this->logger->info('Etat Commande : la commande '.$id.' est désormais validée.');
         } catch (ModelNotFoundException $e)  {
+            $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.
+                '.');
             throw new CommandeNonTrouveeException($id);
         }
         return $commande->toDTO();
@@ -55,8 +66,10 @@ class ServiceCommande implements ICommander {
         try {
             $commande = Commande::findOrFail($id);
         } catch (ModelNotFoundException $e)  {
+            $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.'.');
             throw new CommandeNonTrouveeException($id);
         }
+        $this->logger->info('Commande : récupération de la commande id '.$id.'.');
         return $commande->toDTO();
     }
 }
