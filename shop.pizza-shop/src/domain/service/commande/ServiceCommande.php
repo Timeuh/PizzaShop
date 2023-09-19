@@ -3,16 +3,16 @@
 namespace pizzashop\shop\domain\service\commande;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Monolog\Logger;
 use pizzashop\shop\domain\dto\commande\CommandeDTO;
 use pizzashop\shop\domain\entities\commande\Commande;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
+use Psr\Log\LoggerInterface;
 
 class ServiceCommande implements ICommander {
-    private Logger $logger;
+    private LoggerInterface $logger;
 
-    public function __construct(Logger $logger) {
+    public function __construct(LoggerInterface $logger) {
         $this->logger = $logger;
     }
 
@@ -44,8 +44,8 @@ class ServiceCommande implements ICommander {
                 throw new MauvaisEtatCommandeException($id);
             }
 
-            $this->logger->info('Etat Commande : la commande '.$id.' est désormais validée.');
             $commande->etat = 2;
+            $this->logger->info('Etat Commande : la commande '.$id.' est désormais validée.');
         } catch (ModelNotFoundException $e)  {
             $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.
                 '.');
