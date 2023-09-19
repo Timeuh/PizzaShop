@@ -2,6 +2,8 @@
 
 namespace pizzashop\shop\domain\dto\commande;
 
+use pizzashop\shop\domain\dto\DTO;
+
 class ItemDTO extends DTO
 {
     public int $id;
