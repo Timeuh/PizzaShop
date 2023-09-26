@@ -8,6 +8,7 @@ session_start();
 $app = AppFactory::create();
 
 // ajoute le routing et l'erreur middleware
+$app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, false, false);
 $app->setBasePath('');
