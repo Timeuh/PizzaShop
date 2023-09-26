@@ -14,14 +14,17 @@ use pizzashop\shop\domain\service\catalogue\IInfoProduit;
 use pizzashop\shop\domain\service\catalogue\ServiceCatalogue;
 use Ramsey\Uuid\Uuid;
 
+use Psr\Log\LoggerInterface;
 class ServiceCommande implements ICommander
 {
 
+    private LoggerInterface $logger;
     private ServiceCatalogue $serviceCatalogue;
 
-    public function __construct()
+    public function __construct(LoggerInterface $logger)
     {
         $this->serviceCatalogue = new IInfoProduit();
+        $this->logger = $logger;
     }
 
 
@@ -81,11 +84,17 @@ class ServiceCommande implements ICommander
             $commande = Commande::findOrFail($id);
 
             if ($commande->etat >= EtatCommande::ETAT_VALIDE) {
+                $this->logger->error('Erreur de validation : impossible de valider la commande '.$id.
+                  ' : Cette commande est déjà validée.');
                 throw new MauvaisEtatCommandeException($id);
             }
 
             $commande->update(['etat' => EtatCommande::ETAT_VALIDE]);
-        } catch (ModelNotFoundException $e) {
+
+            $this->logger->info('Etat Commande : la commande '.$id.' est désormais validée.');
+        } catch (ModelNotFoundException $e)  {
+            $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.
+                '.');
             throw new CommandeNonTrouveeException($id);
         }
         return $commande->toDTO();
@@ -102,9 +111,12 @@ class ServiceCommande implements ICommander
     {
         try {
             $commande = Commande::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
+
+        } catch (ModelNotFoundException $e)  {
+            $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.'.');
             throw new CommandeNonTrouveeException($id);
         }
+        $this->logger->info('Commande : récupération de la commande id '.$id.'.');
         return $commande->toDTO();
     }
 }
