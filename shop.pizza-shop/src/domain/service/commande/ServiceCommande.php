@@ -13,8 +13,11 @@ use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
 use pizzashop\shop\domain\service\catalogue\IInfoProduit;
 use pizzashop\shop\domain\service\catalogue\ServiceCatalogue;
 use Ramsey\Uuid\Uuid;
-
+use Respect\Validation\Exceptions\ValidationException;
+use Respect\Validation\Validator as v;
+use Exception;
 use Psr\Log\LoggerInterface;
+use pizzashop\shop\domain\exception\ValidationCommandeException;
 class ServiceCommande implements ICommander
 {
 
@@ -37,37 +40,52 @@ class ServiceCommande implements ICommander
     public function creerCommande(CommandeDTO $commande): CommandeDTO
     {
         $creation = new Commande();
+        try {
+            v::notEmpty()->numericalVal()->positive()->between(1,4)->validate($commande->type_livraison);
+            $creation->type_livraison = $commande->type_livraison;
+            v::notEmpty()->email()->validate($commande->mail_client);
+            $creation->mail_client = $commande->mail_client;
+        }catch (ValidationException $e){
+            throw new ValidationCommandeException($e);
+        }
         $creation->id = Uuid::uuid4()->toString();
         $creation->date_commande = date("Y-m-d H:i:s");
         $creation->etat = 1;
         $creation->delai = 0;
-        $creation->type_livraison = $commande->type_livraison;
-        $creation->mail_client = $commande->mail_client;
 
-        foreach ($commande->items as $itemDTO){
-            try {
-                $infoitem = $this->serviceCatalogue->getProduit($itemDTO->numero, $itemDTO->taille);
-            }catch (ServiceCommandeInvalideDonneeException $e){
-                throw new ServiceCommandeInvalideDonneeException();
+
+        try {
+            v::notEmpty()->validate($commande->items);
+            foreach ($commande->items as $itemDTO) {
+                try {
+                    $infoitem = $this->serviceCatalogue->getProduit($itemDTO->numero, $itemDTO->taille);
+                } catch (Exception $e) {
+                    throw new ServiceCommandeInvalideDonneeException();
+                }
+
+                $item = new Item();
+                try {
+                    v::notEmpty()->numericVal()->positive()->validate($item->numero);
+                    $item->numero = $itemDTO->numero;
+                    v::notEmpty()->stringVal()->validate($item->taille);
+                    $item->taille = $itemDTO->taille;
+                    v::notEmpty()->numericVal()->positive()->validate($item->quantite);
+                    $item->quantite = $itemDTO->quantite;
+
+                    $item->libelle = $infoitem->libelle_produit;
+                    $item->libelle_taille = $infoitem->libelle_taille;
+                    $item->tarif = $infoitem->tarif;
+
+                }catch (ValidationException $e){
+                    throw new ValidationCommandeException($e);
+                }
             }
-
-            $item = new Item();
-            $item->numero = $itemDTO->numero;
-            $item->taille = $itemDTO->taille;
-            $item->quantite = $itemDTO->quantite;
-
-            $item->libelle = $infoitem->libelle_produit;
-            $item->libelle_taille = $infoitem->libelle_taille;
-            $item->tarif = $infoitem->tarif;
-
-            $creation->items()->save($item);
+        }catch (ValidationException $e){
+            throw new ValidationCommandeException($e);
         }
-
         $creation->calculerMontant();
         $creation->save();
         return $creation->toDTO();
-
-
     }
 
     /**
