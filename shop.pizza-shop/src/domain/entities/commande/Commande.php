@@ -10,10 +10,16 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
     protected $primaryKey = 'id';
     protected $keyType = 'string';
     public $timestamps = false;
-    protected $fillable = ['type_livraison', 'id', 'delai', 'date_commande', 'etat', 'montant_total', 'id_client'];
+    protected $fillable = ['type_livraison', 'id', 'delai', 'date_commande', 'etat', 'montant_total', 'mail_client'];
 
     public function items() {
         return $this->hasMany(Item::class, 'commande_id');
+    }
+
+    public function calculerMontant(){
+        foreach ($this->items as $item){
+            $this->montant_total+=$this->montant_total+$item->tarif;
+        }
     }
 
     /**
