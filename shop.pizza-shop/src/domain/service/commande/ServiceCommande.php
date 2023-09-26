@@ -41,7 +41,7 @@ class ServiceCommande implements ICommander
     {
         $creation = new Commande();
         try {
-            v::notEmpty()->numericalVal()->positive()->between(1,4)->validate($commande->type_livraison);
+            v::notEmpty()->numericVal()->positive()->between(1,4)->validate($commande->type_livraison);
             $creation->type_livraison = $commande->type_livraison;
             v::notEmpty()->email()->validate($commande->mail_client);
             $creation->mail_client = $commande->mail_client;
