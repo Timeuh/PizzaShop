@@ -5,7 +5,8 @@ namespace pizzashop\shop\app\actions;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use pizzashop\shop\domain\service\commande\ServiceCommande;
-use monolog\Logger as Logger;
+use Monolog\Logger as Logger;
+
 
 class AccederCommandeAction {
 
@@ -26,7 +27,7 @@ class AccederCommandeAction {
             'type' => 'resource',
             'commande' => [
                 'id' => $commande->id,
-                'date_commande' => $commande->date_commande,
+                'date_commande' => $commande->date_commande->format('Y-m-d H:i:s'),
                 'type_livraison' => $commande->type_livraison,
                 'etat' => $commande->etat,
                 'montant_total' => $commande->montant_total,
@@ -37,13 +38,13 @@ class AccederCommandeAction {
         ];
         foreach ($items as $item) {
             $data['commande']['items'][] = [
-                'id' => $item->id,
-                'numero' => $item->numero,
-                'libelle' => $item->libelle,
-                'libelle_taille' => $item->libelle_taille,
-                'taille' => $item->taille,
-                'quantite' => $item->quantite,
-                'tarif' => $item->tarif,
+                'id' => $item['id'],
+                'numero' => $item['numero'],
+                'libelle' => $item['libelle'],
+                'libelle_taille' => $item['libelle_taille'],
+                'taille' => $item['taille'],
+                'quantite' => $item['quantite'],
+                'tarif' => $item['tarif'],
             ];
         }
 
