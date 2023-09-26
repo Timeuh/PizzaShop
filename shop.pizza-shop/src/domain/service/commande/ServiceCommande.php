@@ -5,16 +5,16 @@ namespace pizzashop\shop\domain\service\commande;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\shop\domain\dto\commande\CommandeDTO;
 use pizzashop\shop\domain\entities\commande\Commande;
-use pizzashop\shop\domain\entities\commande\EtatCommande;
-use pizzashop\shop\domain\entities\commande\Item;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
 use pizzashop\shop\domain\service\catalogue\IInfoProduit;
 use pizzashop\shop\domain\service\catalogue\ServiceCatalogue;
+use pizzashop\shop\domain\service\commande\commande\EtatCommande;
+use pizzashop\shop\domain\service\commande\commande\Item;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
-use Psr\Log\LoggerInterface;
 class ServiceCommande implements ICommander
 {
 
