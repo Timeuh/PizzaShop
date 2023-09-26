@@ -23,7 +23,7 @@ class ServiceCommande implements ICommander
 
     public function __construct(LoggerInterface $logger)
     {
-        $this->serviceCatalogue = new IInfoProduit();
+        $this->serviceCatalogue = new ServiceCatalogue();
         $this->logger = $logger;
     }
 
