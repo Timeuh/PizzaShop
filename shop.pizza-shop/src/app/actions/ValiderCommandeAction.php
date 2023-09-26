@@ -2,26 +2,18 @@
 
 namespace pizzashop\shop\app\actions;
 
-use Slim\Psr7\Request;
-use Slim\Psr7\Response;
-use pizzashop\shop\domain\service\commande\ICommander;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
-use Psr\Log\LoggerInterface;
+use pizzashop\shop\domain\service\commande\ServiceCommande;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 class ValiderCommandeAction
 {
-    private ICommander $commander;
-    private LoggerInterface $logger;
-
-    public function __construct(ICommander $commander, LoggerInterface $logger)
-    {
-        $this->commander = $commander;
-        $this->logger = $logger;
-    }
 
     public function __invoke(Request $request, Response $response, $args)
     {
+        $serviceCommande = new ServiceCommande();
         // Récupérer l'ID de la commande depuis les paramètres de l'URL
         $idCommande = $args['id_commande'];
 
@@ -30,7 +22,7 @@ class ValiderCommandeAction
 
         // Vérifier si la commande existe en utilisant le service de commande
         try {
-            $commande = $this->commander->accederCommande($idCommande);
+            $commande = $this->$serviceCommande->accederCommande($idCommande);
         } catch (commandeNonTrouveeException $e) {
             // La commande n'existe pas, renvoyer une réponse 404
             return $response->withJson(['error' => 'Commande introuvable'], 404);
@@ -40,7 +32,7 @@ class ValiderCommandeAction
         if (isset($requestData['etat']) && $requestData['etat'] === 'validee') {
             try {
                 // Valider la commande en utilisant le service de commande
-                $commandeValidee = $this->commander->validerCommande($idCommande);
+                $commandeValidee = $this->$serviceCommande->validerCommande($idCommande);
             } catch (MauvaisEtatCommandeException $e) {
                 // La commande est déjà validée, renvoyer une réponse 400
                 return $response->withJson(['error' => 'Cette commande est déjà validée'], 400);
