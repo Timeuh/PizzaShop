@@ -2,6 +2,7 @@
 
 namespace pizzashop\shop\domain\service\commande;
 
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\shop\domain\dto\commande\CommandeDTO;
 use pizzashop\shop\domain\entities\commande\Commande;
@@ -10,14 +11,13 @@ use pizzashop\shop\domain\entities\commande\Item;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
-use pizzashop\shop\domain\service\catalogue\IInfoProduit;
+use pizzashop\shop\domain\exception\ValidationCommandeException;
 use pizzashop\shop\domain\service\catalogue\ServiceCatalogue;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Validator as v;
-use Exception;
-use Psr\Log\LoggerInterface;
-use pizzashop\shop\domain\exception\ValidationCommandeException;
+
 class ServiceCommande implements ICommander
 {
 
@@ -58,7 +58,7 @@ class ServiceCommande implements ICommander
             v::notEmpty()->validate($commande->items);
             foreach ($commande->items as $itemDTO) {
                 try {
-                    $infoitem = $this->serviceCatalogue->getProduit($itemDTO->numero, $itemDTO->taille);
+                    $infoitem = $this->serviceCatalogue->getProduit($itemDTO['numero'], $itemDTO['taille']);
                 } catch (Exception $e) {
                     throw new ServiceCommandeInvalideDonneeException();
                 }
