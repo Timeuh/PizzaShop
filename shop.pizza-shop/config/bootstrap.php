@@ -1,6 +1,10 @@
 <?php
 
+use DI\ContainerBuilder;
 use Illuminate\Database\Capsule\Manager as DB;
+use Monolog\Logger;
+use pizzashop\shop\domain\service\commande\ServiceCommande;
+use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
 
 session_start();
