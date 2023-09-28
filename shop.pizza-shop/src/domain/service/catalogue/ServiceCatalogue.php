@@ -1,6 +1,9 @@
 <?php
 
 namespace pizzashop\shop\domain\service\catalogue;
+use pizzashop\shop\domain\service\catalogue\IInfoProduit;
+use pizzashop\shop\domain\service\catalogue\IBrowserCatalogue;
+use pizzashop\shop\domain\dto\catalogue\ProduitDTO;
 
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
