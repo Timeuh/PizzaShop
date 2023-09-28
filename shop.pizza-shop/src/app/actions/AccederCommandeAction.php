@@ -3,22 +3,25 @@
 namespace pizzashop\shop\app\actions;
 
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
+use pizzashop\shop\domain\service\commande\ICommander;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use pizzashop\shop\domain\service\commande\ServiceCommande;
-use Monolog\Logger as Logger;
 
 
 class AccederCommandeAction extends AbstractAction {
 
+    private ICommander $serviceCommande;
+
+    public function __construct(ICommander $s)
+    {
+        $this->serviceCommande = $s;
+    }
 
     public function __invoke(Request $request, Response $response, $args): Response {
 
-        $serviceCommande = $this->container->get('commande.service');
-
         try {
             $id_commande = $args['id_commande'];
-            $commande = $serviceCommande->accederCommande($id_commande);
+            $commande = $this->serviceCommande->accederCommande($id_commande);
         } catch (CommandeNonTrouveeException $e) {
             $responseMessage = array(
                 "message" => "404 Not Found",
