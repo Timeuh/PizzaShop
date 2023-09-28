@@ -2,10 +2,18 @@
 
 use Illuminate\Database\Capsule\Manager as DB;
 use Slim\Factory\AppFactory;
+use DI\ContainerBuilder;
 
 session_start();
 // crée l'app et le moteur de templates
-$app = AppFactory::create();
+
+$builder = new ContainerBuilder();
+$c=$builder->build();
+
+
+
+$app = AppFactory::createFromContainer($c);
+$container = $app->getContainer();
 
 // ajoute le routing et l'erreur middleware
 $app->addBodyParsingMiddleware();

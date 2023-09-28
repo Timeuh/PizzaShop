@@ -9,7 +9,7 @@ use pizzashop\shop\domain\service\commande\ServiceCommande;
 use Monolog\Logger as Logger;
 
 
-class AccederCommandeAction {
+class AccederCommandeAction extends AbstractAction {
 
 
     public function __invoke(Request $request, Response $response, $args): Response {
