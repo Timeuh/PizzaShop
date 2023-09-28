@@ -13,7 +13,8 @@ class AccederCommandeAction extends AbstractAction {
 
 
     public function __invoke(Request $request, Response $response, $args): Response {
-        $serviceCommande = new ServiceCommande(new Logger("test"));
+
+        $serviceCommande = $this->container->get('commande.service');
 
         try {
             $id_commande = $args['id_commande'];
