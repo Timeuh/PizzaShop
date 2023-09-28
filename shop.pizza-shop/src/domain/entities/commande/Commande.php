@@ -29,13 +29,13 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
      */
     public function toDTO(): CommandeDTO {
         return new CommandeDTO(
-            $this->id,
-            $this->date_commande,
             $this->type_livraison,
-            $this->etat,
+            $this->mail_client,
+            $this->items->toArray(),
             $this->montant_total,
-            $this->id_client,
-            $this->items,
+            $this->id,
+            new \DateTime($this->date_commande),
+            $this->etat,
             $this->delai
         );
     }
