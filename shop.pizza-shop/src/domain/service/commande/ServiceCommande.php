@@ -17,9 +17,7 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Validator as v;
-use Exception;
-use Psr\Log\LoggerInterface;
-use pizzashop\shop\domain\exception\ValidationCommandeException;
+
 class ServiceCommande implements ICommander
 {
 
