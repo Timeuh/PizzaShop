@@ -2,6 +2,7 @@
 
 namespace pizzashop\shop\domain\service\commande;
 
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\shop\domain\dto\commande\CommandeDTO;
 use pizzashop\shop\domain\entities\commande\Commande;
@@ -10,8 +11,9 @@ use pizzashop\shop\domain\entities\commande\Item;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
-use pizzashop\shop\domain\service\catalogue\IInfoProduit;
+use pizzashop\shop\domain\exception\ValidationCommandeException;
 use pizzashop\shop\domain\service\catalogue\ServiceCatalogue;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Validator as v;
@@ -41,7 +43,7 @@ class ServiceCommande implements ICommander
     {
         $creation = new Commande();
         try {
-            v::notEmpty()->numericalVal()->positive()->between(1,4)->validate($commande->type_livraison);
+            v::notEmpty()->numericVal()->positive()->between(1,4)->validate($commande->type_livraison);
             $creation->type_livraison = $commande->type_livraison;
             v::notEmpty()->email()->validate($commande->mail_client);
             $creation->mail_client = $commande->mail_client;
@@ -53,32 +55,30 @@ class ServiceCommande implements ICommander
         $creation->etat = 1;
         $creation->delai = 0;
 
-
         try {
             v::notEmpty()->validate($commande->items);
             foreach ($commande->items as $itemDTO) {
                 try {
-                    $infoitem = $this->serviceCatalogue->getProduit($itemDTO->numero, $itemDTO->taille);
+                    $infoItem = $this->serviceCatalogue->getProduit($itemDTO['numero'], $itemDTO['taille']);
                 } catch (Exception $e) {
                     throw new ServiceCommandeInvalideDonneeException();
                 }
 
                 $item = new Item();
                 try {
-                    v::notEmpty()->numericVal()->positive()->validate($item->numero);
-                    $item->numero = $itemDTO->numero;
-                    v::notEmpty()->stringVal()->validate($item->taille);
-                    $item->taille = $itemDTO->taille;
-                    v::notEmpty()->numericVal()->positive()->validate($item->quantite);
-                    $item->quantite = $itemDTO->quantite;
-
-                    $item->libelle = $infoitem->libelle_produit;
-                    $item->libelle_taille = $infoitem->libelle_taille;
-                    $item->tarif = $infoitem->tarif;
-
+                    v::notEmpty()->numericVal()->positive()->validate($infoItem->numero_produit);
+                    $item->numero = $infoItem->numero_produit;
+                    v::notEmpty()->stringVal()->validate($infoItem->libelle_taille);
+                    $item->taille = $infoItem->libelle_taille;
+                    v::notEmpty()->numericVal()->positive()->validate($itemDTO['quantite']);
+                    $item->quantite = $itemDTO['quantite'];
+                    $item->libelle = $infoItem->libelle_produit;
+                    $item->libelle_taille = $infoItem->libelle_taille;
+                    $item->tarif = $infoItem->tarif;
                 }catch (ValidationException $e){
                     throw new ValidationCommandeException($e);
                 }
+                $creation->items[] = $item;
             }
         }catch (ValidationException $e){
             throw new ValidationCommandeException($e);

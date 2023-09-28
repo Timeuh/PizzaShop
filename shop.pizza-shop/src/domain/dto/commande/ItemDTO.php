@@ -4,8 +4,7 @@ namespace pizzashop\shop\domain\dto\commande;
 
 use pizzashop\shop\domain\dto\DTO;
 
-class ItemDTO extends DTO
-{
+class ItemDTO extends DTO {
     public int $id;
     public int $numero;
     public string $libelle;
@@ -13,9 +12,9 @@ class ItemDTO extends DTO
     public string $libelle_taille;
     public int $quantite;
     public float $tarif;
+    public string $commande_id;
 
-    public function __construct(int $id, int $numero, string $libelle, int $taille, string $libelle_taille, int $quantite, float $tarif)
-    {
+    public function __construct(int $id, int $numero, string $libelle, int $taille, string $libelle_taille, int $quantite, float $tarif, string $commande_id) {
         $this->id = $id;
         $this->numero = $numero;
         $this->libelle = $libelle;
@@ -23,5 +22,6 @@ class ItemDTO extends DTO
         $this->taille = $taille;
         $this->quantite = $quantite;
         $this->tarif = $tarif;
+        $this->commande_id = $commande_id;
     }
 }
