@@ -1,22 +1,35 @@
 <?php
 
 namespace pizzashop\shop\domain\service\catalogue;
-use pizzashop\shop\domain\service\catalogue\IInfoProduit;
-use pizzashop\shop\domain\service\catalogue\IBrowserCatalogue;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\shop\domain\dto\catalogue\ProduitDTO;
+use pizzashop\shop\domain\entities\catalogue\Produit;
+use pizzashop\shop\domain\exception\ProduitNonTrouveeException;
 
 
-class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue{
+class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
 
-public function getProduit(int $num, int $taille): ProduitDTO {
-    try{
-        $produit = Produit::where('id', $num)->andWhere('taille', $taille)->firstOrFail();
-    } catch (ModelNotFoundException $e) {
-        throw new ProduitNonTrouveeException($num);
+    public function getProduit(int $num, int $taille): ProduitDTO {
+        try {
+            $produit = Produit::where('numero', $num)
+                ->whereHas('tailles', function ($query) use ($taille) {
+                    $query->where('taille_id', $taille);
+                })
+                ->with('categorie', 'tailles')
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            throw new ProduitNonTrouveeException($num);
+        }
+        return new ProduitDTO(
+            $produit->numero,
+            $produit->libelle,
+            $produit->categorie->libelle,
+            $produit->tailles[$taille-1]->libelle,
+            $produit->tailles[$taille-1]->pivot->tarif,
+        );
     }
-    return new ProduitDTO($produit->id, $produit->nom, $produit->description, $produit->prix, $produit->taille);
 
-}
     public function getProduitsParCategorie($categorie): array {
         try {
             $produits = Produit::where('categorie', $categorie)->get();
