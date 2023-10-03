@@ -21,7 +21,7 @@ class Item extends Model
 
     public function toDTO(): ItemDTO
     {
-        $itemDTO = new ItemDTO($this->id,$this->numero, $this->libelle,$this->taille,$this->libelle_taille, $this->quantite,$this->tarif);
+        $itemDTO = new ItemDTO($this->id,$this->numero, $this->libelle,$this->taille,$this->libelle_taille, $this->quantite,$this->tarif, $this->commande_id);
         return $itemDTO;
     }
 
