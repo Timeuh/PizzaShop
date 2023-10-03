@@ -1,3 +1,5 @@
 .idea/
 /auth.pizza-shop/vendor/
 /shop.pizza-shop/vendor/
+
+*.log

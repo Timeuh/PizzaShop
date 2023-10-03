@@ -24,9 +24,9 @@ class ServiceCommande implements ICommander
     private LoggerInterface $logger;
     private ServiceCatalogue $serviceCatalogue;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, ServiceCatalogue $sc)
     {
-        $this->serviceCatalogue = new ServiceCatalogue();
+        $this->serviceCatalogue = $sc;
         $this->logger = $logger;
     }
 

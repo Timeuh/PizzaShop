@@ -1,9 +1,11 @@
 <?php
 
 namespace pizzashop\shop\domain\service\catalogue;
-use pizzashop\shop\domain\service\catalogue\IInfoProduit;
-use pizzashop\shop\domain\service\catalogue\IBrowserCatalogue;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\shop\domain\dto\catalogue\ProduitDTO;
+use pizzashop\shop\domain\entities\catalogue\Produit;
+use pizzashop\shop\domain\exception\ProduitNonTrouveeException;
 
 
 class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue{
