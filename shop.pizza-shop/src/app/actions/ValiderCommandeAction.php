@@ -10,10 +10,12 @@ use Slim\Psr7\Response;
 
 class ValiderCommandeAction
 {
-
     public function __invoke(Request $request, Response $response, $args)
     {
-        $serviceCommande = new ServiceCommande();
+        $logger = new \Monolog\Logger('commandes');
+        $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../logs/commandes.log', \Monolog\Level::Debug));
+        $serviceCommande = new ServiceCommande($logger);
+
         // Récupérer l'ID de la commande depuis les paramètres de l'URL
         $idCommande = $args['id_commande'];
 
@@ -22,20 +24,40 @@ class ValiderCommandeAction
 
         // Vérifier si la commande existe en utilisant le service de commande
         try {
-            $commande = $this->$serviceCommande->accederCommande($idCommande);
-        } catch (commandeNonTrouveeException $e) {
-            // La commande n'existe pas, renvoyer une réponse 404
-            return $response->withJson(['error' => 'Commande introuvable'], 404);
+            $commande = $serviceCommande->accederCommande($idCommande);
+        } catch (CommandeNonTrouveeException $e) {
+            $responseMessage = array(
+                "message" => "404 Not Found",
+                "exception" => array(
+                    "type" => $e::class,
+                    "code" => $e->getCode(),
+                    "message" => $e->getMessage(),
+                    "file" => $e->getFile(),
+                    "line" => $e->getLine()
+                ));
+
+            $response->getBody()->write(json_encode($responseMessage));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }
 
         // Vérifier si le champ "etat" est présent dans le corps de la requête
         if (isset($requestData['etat']) && $requestData['etat'] === 'validee') {
             try {
                 // Valider la commande en utilisant le service de commande
-                $commandeValidee = $this->$serviceCommande->validerCommande($idCommande);
+                $commandeValidee = $serviceCommande->validerCommande($idCommande);
             } catch (MauvaisEtatCommandeException $e) {
-                // La commande est déjà validée, renvoyer une réponse 400
-                return $response->withJson(['error' => 'Cette commande est déjà validée'], 400);
+                $responseMessage = array(
+                    "message" => "400 la requête est déjà validée",
+                    "exception" => array(
+                        "type" => $e::class,
+                        "code" => $e->getCode(),
+                        "message" => $e->getMessage(),
+                        "file" => $e->getFile(),
+                        "line" => $e->getLine()
+                    ));
+
+                $response->getBody()->write(json_encode($responseMessage));
+                return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
             }
 
             // En cas de succès, retourner une réponse formatée
