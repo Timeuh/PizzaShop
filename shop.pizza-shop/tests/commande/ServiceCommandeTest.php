@@ -3,10 +3,9 @@
 namespace pizzashop\tests\commande;
 
 use Faker\Factory;
-use PHPUnit\Framework\Attributes\DataProvider;
-use pizzashop\shop\domain\entities\commande\Commande;
-use pizzashop\shop\domain\entities\commande\Item;
 use Illuminate\Database\Capsule\Manager as DB;
+use pizzashop\shop\domain\entities\commande\Commande;
+use pizzashop\shop\domain\service\commande\commande\Item;
 
 class ServiceCommandeTest extends \PHPUnit\Framework\TestCase {
 
@@ -71,7 +70,7 @@ class ServiceCommandeTest extends \PHPUnit\Framework\TestCase {
              */
             $nbItems = self::$faker->numberBetween(1, 5);
             for ($j = 0; $j < 3; $j++) {
-                $item = new \pizzashop\shop\domain\entities\commande\Item();
+                $item = new \pizzashop\shop\domain\service\commande\commande\Item();
                 $numero = self::$faker->numberBetween(1, 10);
                 $taille = self::$faker->randomElement([3, 4]);
 
