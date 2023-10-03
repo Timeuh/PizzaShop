@@ -40,43 +40,59 @@ class ValiderCommandeAction
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }
 
-        // Vérifier si le champ "etat" est présent dans le corps de la requête
-        if (isset($requestData['etat']) && $requestData['etat'] === 'validee') {
-            try {
-                // Valider la commande en utilisant le service de commande
-                $commandeValidee = $serviceCommande->validerCommande($idCommande);
-            } catch (MauvaisEtatCommandeException $e) {
-                $responseMessage = array(
-                    "message" => "400 la requête est déjà validée",
-                    "exception" => array(
-                        "type" => $e::class,
-                        "code" => $e->getCode(),
-                        "message" => $e->getMessage(),
-                        "file" => $e->getFile(),
-                        "line" => $e->getLine()
-                    ));
+        $etatCommande = $commande->etat;
 
-                $response->getBody()->write(json_encode($responseMessage));
+        // Vérifier si le champ "etat" est présent dans le corps de la requête
+        if ($etatCommande) {
+            // Récupérer l'état actuel de la commande
+
+            if ($etatCommande == 2) {
+                $messageEtatCommande = 'validée';
+            } elseif ($etatCommande == 3) {
+                $messageEtatCommande = 'payée';
+            } elseif ($etatCommande == 4) {
+                $messageEtatCommande = 'livrée';
+            } else {
+                $messageEtatCommande = 'créée';
+            }
+
+            if ($etatCommande == 1) {
+                // L'état actuel de la commande est égal à 1
+                try {
+                    // Valider la commande en utilisant le service de commande
+                    $commandeValidee = $serviceCommande->validerCommande($idCommande);
+                    // En cas de succès, retourner une réponse formatée
+                    $responseJson = [
+                        'message' => 'Commande validée avec succès',
+                        'id_commande' => $idCommande,
+                        'etat' => 'etat : ' . $commandeValidee->etat,
+                    ];
+
+                    $response->getBody()->write(json_encode($responseJson));
+                    return $response->withHeader('Content-Type', 'application/json');
+                } catch (MauvaisEtatCommandeException $e) {
+                    $responseMessage = array(
+                        "message" => "400 Bad Request",
+                        "exception" => array(
+                            "type" => $e::class,
+                            "code" => $e->getCode(),
+                            "message" => $e->getMessage(),
+                            "file" => $e->getFile(),
+                            "line" => $e->getLine()
+                        ));
+
+                    $response->getBody()->write(json_encode($responseMessage));
+                    return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+                }
+            } else {
+                // L'état actuel de la commande n'est pas égal à 1
+                $response->getBody()->write(json_encode(['error' => 'Impossible de valider la commande car l\'état actuel est : ' . $messageEtatCommande . ' au lieu de créée']));
                 return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
             }
-
-            // En cas de succès, retourner une réponse formatée
-            $responseJson = [
-                'message' => 'Commande validée avec succès',
-                'id_commande' => $idCommande,
-                'etat' => 'validee'
-            ];
-
-            return $response->withJson($responseJson);
         } else {
-            // La requête est invalide
-            if (!isset($requestData['etat'])) {
-                // Le champ "etat" est manquant
-                return $response->withJson(['error' => 'Le champ "etat" est requis'], 400);
-            } else {
-                // La transition demandée n'est pas correcte
-                return $response->withJson(['error' => 'Transition demandée incorrecte'], 400);
-            }
+            // Le champ "etat" est manquant
+            $response->getBody()->write(json_encode(['error' => 'Problème serveur']));
+            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
         }
     }
 }
