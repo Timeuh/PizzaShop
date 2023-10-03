@@ -15,7 +15,7 @@ class CommandeDTO extends DTO {
     public int $delai;
     public array $items;
 
-    public function __construct(string $id, DateTime $date_commande, int $type_livraison, int $etat, float $montant_total, string $mail_client, array $items, int $delai) {
+    public function __construct(int $type_livraison, string $mail_client, array $items, float $montant_total = 0, string $id = '', DateTime $date_commande = new DateTime('now'),  int $etat = 1,  int $delai = 0) {
         $this->id = $id;
         $this->date_commande = $date_commande;
         $this->type_livraison = $type_livraison;
