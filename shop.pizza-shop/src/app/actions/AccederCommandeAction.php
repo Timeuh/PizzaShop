@@ -2,26 +2,41 @@
 
 namespace pizzashop\shop\app\actions;
 
+use pizzashop\shop\domain\exception\commandeNonTrouveeException;
+use pizzashop\shop\domain\service\commande\ICommander;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use pizzashop\shop\domain\service\commande\ServiceCommande;
-use Monolog\Logger as Logger;
 
 
-class AccederCommandeAction {
+class AccederCommandeAction extends AbstractAction {
 
+    private ICommander $serviceCommande;
+
+    public function __construct(ICommander $s)
+    {
+        $this->serviceCommande = $s;
+    }
 
     public function __invoke(Request $request, Response $response, $args): Response {
-        $serviceCommande = new ServiceCommande(new Logger("test"));
 
-        $id_commande = $args['id_commande'];
-        $commande = $serviceCommande->accederCommande($id_commande);
+        try {
+            $id_commande = $args['id_commande'];
+            $commande = $this->serviceCommande->accederCommande($id_commande);
+        } catch (CommandeNonTrouveeException $e) {
+            $responseMessage = array(
+                "message" => "404 Not Found",
+                "exception" => array(
+                    "type" => $e::class,
+                    "code" => $e->getCode(),
+                    "message" => $e->getMessage(),
+                    "file" => $e->getFile(),
+                    "line" => $e->getLine()
+                ));
 
-
-        if (!$commande) {
-            $response->getBody()->write(json_encode(['error' => 'Commande introuvable']));
+            $response->getBody()->write(json_encode($responseMessage));
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }
+
         $items = $commande->items;
         $data = [
             'type' => 'resource',
@@ -34,6 +49,14 @@ class AccederCommandeAction {
                 'mail_client' => $commande->mail_client,
                 'delai' => $commande->delai,
                 'items' => [],
+                'links' => [
+                    'self' => [
+                        'href' => '/commandes/' .$commande->id,
+                    ],
+                    'valider' => [
+                        'href' => '/commandes/' .$commande->id,
+                    ],
+                ],
             ],
         ];
         foreach ($items as $item) {
