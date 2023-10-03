@@ -8,7 +8,7 @@ use pizzashop\shop\domain\dto\commande\CommandeDTO;
 use pizzashop\shop\domain\entities\commande\Commande;
 use pizzashop\shop\domain\entities\commande\EtatCommande;
 use pizzashop\shop\domain\entities\commande\Item;
-use pizzashop\shop\domain\exception\commandeNonTrouveeException;
+use pizzashop\shop\domain\exception\CommandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
 use pizzashop\shop\domain\exception\ValidationCommandeException;

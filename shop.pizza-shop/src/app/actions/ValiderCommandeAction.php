@@ -4,19 +4,22 @@ namespace pizzashop\shop\app\actions;
 
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
-use pizzashop\shop\domain\service\commande\ServiceCommande;
+use pizzashop\shop\domain\service\commande\ICommander;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-class ValiderCommandeAction
+class ValiderCommandeAction extends AbstractAction
 {
+
+    private ICommander $serviceCommande;
+
+    public function __construct(ICommander $s)
+    {
+        $this->serviceCommande = $s;
+    }
     public function __invoke(Request $request, Response $response, $args)
     {
-        $logger = new \Monolog\Logger('commandes');
-        $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../logs/commandes.log', \Monolog\Level::Debug));
-        $serviceCommande = new ServiceCommande($logger);
-
-        // Récupérer l'ID de la commande depuis les paramètres de l'URL
+            // Récupérer l'ID de la commande depuis les paramètres de l'URL
         $idCommande = $args['id_commande'];
 
         // Récupérer le corps de la requête JSON
@@ -24,7 +27,7 @@ class ValiderCommandeAction
 
         // Vérifier si la commande existe en utilisant le service de commande
         try {
-            $commande = $serviceCommande->accederCommande($idCommande);
+            $commande = $this->serviceCommande->accederCommande($idCommande);
         } catch (CommandeNonTrouveeException $e) {
             $responseMessage = array(
                 "message" => "404 Not Found",
@@ -60,7 +63,7 @@ class ValiderCommandeAction
                 // L'état actuel de la commande est égal à 1
                 try {
                     // Valider la commande en utilisant le service de commande
-                    $commandeValidee = $serviceCommande->validerCommande($idCommande);
+                    $commandeValidee = $this->serviceCommande->validerCommande($idCommande);
                     // En cas de succès, retourner une réponse formatée
                     $responseJson = [
                         'message' => 'Commande validée avec succès',
