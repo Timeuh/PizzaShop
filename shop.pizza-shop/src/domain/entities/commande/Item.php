@@ -1,10 +1,9 @@
 <?php
 
-namespace pizzashop\shop\domain\service\commande\commande;
+namespace pizzashop\shop\domain\entities\commande;
 
 use Illuminate\Database\Eloquent\Model;
 use pizzashop\shop\domain\dto\commande\ItemDTO;
-use pizzashop\shop\domain\entities\commande\Commande;
 
 class Item extends Model
 {
@@ -22,7 +21,7 @@ class Item extends Model
 
     public function toDTO(): ItemDTO
     {
-        $itemDTO = new ItemDTO($this->id,$this->numero, $this->libelle,$this->taille,$this->libelle_taille, $this->quantite,$this->tarif);
+        $itemDTO = new ItemDTO($this->id,$this->numero, $this->libelle,$this->taille,$this->libelle_taille, $this->quantite,$this->tarif, $this->commande_id);
         return $itemDTO;
     }
 
