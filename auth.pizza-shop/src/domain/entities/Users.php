@@ -1,6 +1,7 @@
 <?php
 
 namespace pizzashop\auth\api\app\domain\entities;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use pizzashop\shop\domain\dto\catalogue\ProduitDTO;
 
@@ -22,11 +23,11 @@ class Users extends Model
             $this->password,
             $this->active,
             $this->activation_token,
-            $this->activation_token_expiration_date,
+            DateTime::createFromFormat('Y-m-d H:i:s', $this->activation_token_expiration_date),
             $this->refresh_token,
-            $this->refresh_token_expiration_date,
+            DateTime::createFromFormat('Y-m-d H:i:s', $this->refresh_token_expiration_date),
             $this->reset_passwd_token,
-            $this->reset_passwd_token_expiration_date,
+            DateTime::createFromFormat('Y-m-d H:i:s',$this->reset_passwd_token_expiration_date),
             $this->username,
         );
     }
