@@ -60,11 +60,11 @@ services:
     networks:
       - pizza-shop.net
 
-######################################
-###  AUTH Service : service d'authentification JWT
-###  api api.auth : auth, check, refresh de token JWT
-###  utilise sa propre base de données
-######################################
+  ######################################
+  ###  AUTH Service : service d'authentification JWT
+  ###  api api.auth : auth, check, refresh de token JWT
+  ###  utilise sa propre base de données
+  ######################################
   api.pizza-auth:
     image: 'canals/php:latest'
     env_file: ./auth.env
