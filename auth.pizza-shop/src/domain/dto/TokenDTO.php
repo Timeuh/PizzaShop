@@ -2,18 +2,19 @@
 
 namespace pizzashop\auth\api\domain\dto;
 
-use Firebase\JWT\JWT;
-
 class TokenDTO extends DTO {
     public string $refreshToken;
-    public JWT $jwt;
+    public string $activationToken;
+    public string $jwt;
 
     /**
      * @param string $refreshToken
-     * @param JWT $jwt
+     * @param string $jwt
+     * @param string $activationToken
      */
-    public function __construct(string $refreshToken = '', JWT $jwt = null) {
+    public function __construct(string $refreshToken = '', string $jwt = '', string $activationToken = '') {
         $this->refreshToken = $refreshToken;
         $this->jwt = $jwt;
+        $this->activationToken = $activationToken;
     }
 }
