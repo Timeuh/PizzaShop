@@ -5,6 +5,8 @@ namespace pizzashop\auth\api\app\auth\providers;
 
 use Exception;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
+use pizzashop\auth\api\domain\dto\TokenDTO;
+use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\service\AuthService;
 
 class AuthProvider {
@@ -25,10 +27,11 @@ class AuthProvider {
     }
 
     public function activate(string $token): void {
+        $t = new TokenDTO($token);
         try {
-            $this->authService->activate_signup($token);
+            $this->authService->activate_signup($t);
         } catch (Exception $e) {
-            throw new AuthServiceInvalideDonneeException($e);
+            throw new AuthServiceInvalideDonneeException();
         }
     }
 
