@@ -11,15 +11,16 @@ use Firebase\JWT\BeforeValidException;
 
 class JwtManager
 {
-    private $secret=getenv('JWT_SECRET');
+    private $secret;
 
     public function createToken($user)
     {
+        $secret=getenv('JWT_SECRET');
 
         $payload = [
             "iss" => "pizza-shop.auth.db",
             "aud" => "api.pizza-shop",
-            "iat" => time(), 'exp'=>time()+3600,
+            "iat" => time(), 'exp'=>time()+getenv('JWT_EXPIRATION'),
             "uid" => $user->id,
             "lvl" => $user->access
         ];
