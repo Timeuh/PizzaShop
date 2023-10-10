@@ -1,6 +1,6 @@
 <?php
 
-namespace pizzashop\auth\api\app\domain\dto;
+namespace pizzashop\auth\api\domain\dto;
 
 abstract class DTO {
     public function toJSON(): string {
