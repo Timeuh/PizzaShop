@@ -15,7 +15,11 @@ class JwtManager
 
     public function createToken($user)
     {
-        $secret=getenv('JWT_SECRET');
+        try {
+            $secret = bin2hex(random_bytes(32));
+        } catch (\Exception $e) {
+        }
+        file_put_contents('auth.env', 'JWT_SECRET=' . $secret . PHP_EOL, FILE_APPEND);
 
         $payload = [
             "iss" => "pizza-shop.auth.db",
@@ -25,7 +29,7 @@ class JwtManager
             "lvl" => $user->access
         ];
 
-        $token = JWT::encode($payload, $this->secret, 'HS512');
+        $token = JWT::encode($payload,getenv('JWT_SECRET'), 'HS512');
         return $token;
     }
 
@@ -38,7 +42,7 @@ class JwtManager
             }
 
             $tokenString = sscanf($h[0], "Bearer %s")[0];
-            $token = JWT::decode($tokenString, new Key(secret, 'HS512'));
+            $token = JWT::decode($tokenString, new Key(getenv('JWT_SECRET'), 'HS512'));
             return $token;
         } catch (ExpiredException $e) {
             return false; // Token expiré
