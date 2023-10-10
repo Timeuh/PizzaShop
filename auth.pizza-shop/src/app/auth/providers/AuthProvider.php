@@ -5,7 +5,7 @@ namespace pizzashop\auth\api\app\auth\providers;
 
 use Exception;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
-use pizzashop\auth\api\domain\dto\UserDTO;
+use pizzashop\auth\api\domain\service\AuthService;
 
 class AuthProvider {
 
