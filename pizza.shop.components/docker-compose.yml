@@ -74,6 +74,7 @@ services:
     volumes:
       - ../auth.pizza-shop/public:/var/www/html
       - ../auth.pizza-shop:/var/www
+      - ./auth.env:/config/.env
     working_dir: /var/www
     networks:
       pizza-shop.net:
