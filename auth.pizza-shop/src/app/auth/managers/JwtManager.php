@@ -2,15 +2,17 @@
 
 namespace pizzashop\auth\api\app\auth\managers;
 
-use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
+use pizzashop\auth\api\domain\exception\JwtException;
+use stdClass;
+use UnexpectedValueException;
 
 
 class JwtManager {
-    public function create(array $user) : string {
+    public function create(array $user): string {
         $payload = [
             'iss' => "pizza-shop.auth.db",
             'iat' => time(),
@@ -24,24 +26,15 @@ class JwtManager {
         return JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS512');
     }
 
-    public function validateToken($token) {
+    public function validate(string $token): stdClass {
         try {
-            $h = $rq->getHeader('Authorization')[0];
-            if (empty($h)) {
-                return false; // Aucun header "Authorization" trouvé
-            }
-
-            $tokenString = sscanf($h[0], "Bearer %s")[0];
-            $token = JWT::decode($tokenString, new Key(getenv('JWT_SECRET'), 'HS512'));
-            return $token;
+            return JWT::decode($token, new Key($_ENV('JWT_SECRET'), 'HS512'));
         } catch (ExpiredException $e) {
-            return false; // Token expiré
+            throw new JwtException('expired');
         } catch (SignatureInvalidException $e) {
-            return false; // Signature invalide
-        } catch (BeforeValidException $e) {
-            return false; // Token pas encore valide
-        } catch (\UnexpectedValueException $e) {
-            return false; // Valeur du token inattendue
+            throw new JwtException('signature');
+        } catch (UnexpectedValueException $e) {
+            throw new JwtException('invalid');
         }
     }
 }
