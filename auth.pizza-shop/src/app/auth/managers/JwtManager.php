@@ -10,17 +10,18 @@ use Firebase\JWT\SignatureInvalidException;
 
 
 class JwtManager {
-    public function createToken($user) {
+    public function create(array $user) : string {
         $payload = [
-            "iss" => "pizza-shop.auth.db",
-            "aud" => "api.pizza-shop",
-            "iat" => time(), 'exp' => time() + getenv('JWT_EXPIRATION'),
-            "uid" => $user->id,
-            "lvl" => $user->access
+            'iss' => "pizza-shop.auth.db",
+            'iat' => time(),
+            'exp' => time() + $_ENV['JWT_EXPIRATION'],
+            'upr' => [
+                'username' => $user['username'],
+                'email' => $user['email'],
+            ],
         ];
 
-        $token = JWT::encode($payload, getenv('JWT_SECRET'), 'HS512');
-        return $token;
+        return JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS512');
     }
 
     public function validateToken($token) {
