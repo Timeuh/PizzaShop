@@ -11,12 +11,6 @@ use Firebase\JWT\SignatureInvalidException;
 
 class JwtManager {
     public function createToken($user) {
-        try {
-            $secret = bin2hex(random_bytes(32));
-        } catch (\Exception $e) {
-        }
-        file_put_contents('auth.env', 'JWT_SECRET=' . $secret . PHP_EOL, FILE_APPEND);
-
         $payload = [
             "iss" => "pizza-shop.auth.db",
             "aud" => "api.pizza-shop",
