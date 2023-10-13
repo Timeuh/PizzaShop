@@ -12,6 +12,12 @@ use UnexpectedValueException;
 
 
 class JwtManager {
+    /**
+     * Crée un jwt à partir d'infos utilisateur : username et email
+     *
+     * @param array $user un tableau contenant le username et l'email de l'utilisateur
+     * @return string un token jwt sous forme de string
+     */
     public function create(array $user): string {
         $payload = [
             'iss' => "pizza-shop.auth.db",
@@ -26,6 +32,13 @@ class JwtManager {
         return JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS512');
     }
 
+    /**
+     * Valide un jwt et retourne son payload
+     *
+     * @param string $token le token jwt sous forme de string
+     * @return stdClass le payload du jwt sous forme d'objet PHP
+     * @throws JwtException si le token est expiré, invalide ou indéchiffrable
+     */
     public function validate(string $token): stdClass {
         try {
             return JWT::decode($token, new Key($_ENV('JWT_SECRET'), 'HS512'));
