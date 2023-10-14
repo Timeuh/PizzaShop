@@ -32,7 +32,26 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function signin(CredentialsDTO $credentialsDTO): TokenDTO {
-        // TODO: Implement signin() method.
+        try {
+            $user = Users::where('email', $credentialsDTO->email)->firstOfFail();
+
+            if(!password_verify($credentialsDTO->password, $user->password)){
+                throw new SignInUtilisateursException();
+            }
+
+            $newRefreshToken = bin2hex(random_bytes(32));
+            $now = new DateTime();
+            $refreshTokenExpDate = $now->modify('+1 hour');
+
+            $user->refresh_token = $newRefreshToken;
+            $user->refresh_token_expiration_date = $refreshTokenExpDate->format('Y-m-d H:i:s');
+            $user->save();
+
+            $token = $this->jwtManager->create(['username' => $user->username, 'email' => $user->email]);
+            return new TokenDTO($newRefreshToken, $token);
+        }catch (Exception $e){
+            throw new SignInUtilisateursException();
+        }
     }
 
     /**

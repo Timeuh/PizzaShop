@@ -23,7 +23,7 @@ class AuthProvider {
     public function register(string $user, string $pass): void {
         $c = new CredentialsDTO($user, $pass);
         try {
-            $userDTO = $this->authService->signup($c);
+            $this->authService->signup($c);
         } catch (Exception $e) {
             throw new AuthServiceInvalideDonneeException($e);
         }
