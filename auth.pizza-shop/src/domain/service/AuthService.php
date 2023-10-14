@@ -11,6 +11,7 @@ use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\dto\UserDTO;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
+use pizzashop\auth\api\domain\exception\SignInUtilisateursException;
 
 class AuthService implements AuthServiceInterface {
     private JwtManager $jwtManager;
