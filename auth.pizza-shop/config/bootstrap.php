@@ -6,7 +6,6 @@ use pizzashop\auth\api\domain\exception\JwtSecretEcritureException;
 use Slim\Factory\AppFactory;
 
 session_start();
-$app = AppFactory::create();
 
 // initialise le chemin vers le .env et le nom du fichier
 $envFileDir = __DIR__.'/../../../config';
