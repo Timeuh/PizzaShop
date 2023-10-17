@@ -21,16 +21,7 @@ class Users extends Model
     {
         return new UserDTO(
             $this->email,
-            $this->password,
-            $this->active,
-            $this->activation_token,
-            DateTime::
-            createFromFormat('Y-m-d H:i:s', $this->activation_token_expiration_date),
-            $this->refresh_token,
-            DateTime::createFromFormat('Y-m-d H:i:s', $this->refresh_token_expiration_date),
-            $this->reset_passwd_token,
-            DateTime::createFromFormat('Y-m-d H:i:s',$this->reset_passwd_token_expiration_date),
-            $this->username,
+            $this->useername,
         );
     }
 
