@@ -3,6 +3,8 @@
 namespace pizzashop\shop\app\actions;
 
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract  class AbstractAction
 {
@@ -13,5 +15,8 @@ abstract  class AbstractAction
     {
         $this->container = $c;
     }
+
+
+    public abstract function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface;
 
 }
