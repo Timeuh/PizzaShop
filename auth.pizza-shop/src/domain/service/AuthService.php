@@ -13,7 +13,6 @@ use pizzashop\auth\api\domain\dto\UserDTO;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
 use pizzashop\auth\api\domain\exception\SignInUtilisateursException;
 use pizzashop\auth\api\domain\exception\UserNotFoundException;
-use function Symfony\Component\Translation\t;
 
 class AuthService implements AuthServiceInterface {
     private JwtManager $jwtManager;
