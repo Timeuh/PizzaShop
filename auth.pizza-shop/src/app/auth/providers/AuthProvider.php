@@ -9,22 +9,22 @@ use pizzashop\auth\api\app\domain\entities\Users;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
+use pizzashop\auth\api\domain\exception\CredentialsException;
 use pizzashop\auth\api\domain\exception\RefreshTokenInvalideException;
 use pizzashop\auth\api\domain\service\AuthService;
 class AuthProvider
 {
-
-    private AuthService $authService;
-
-    public function __construct(AuthService $authService)
+    public function checkCredentials(string $email, string $pass): void
     {
-        $this->authService = $authService;
-    }
+        try {
+            $user = Users::where('email', $email)->firstOfFail();
 
-    public function signIn(string $email, string $pass): void
-    {
-        $c = new CredentialsDTO($email, $pass);
-        $this->authService->signin($c);
+            if (!password_verify($pass, $user->password)) {
+                throw new CredentialsException();
+            }
+        }catch (Exception $e){
+            throw new CredentialsException();
+        }
     }
 
     public function register(string $user, string $pass): void {
