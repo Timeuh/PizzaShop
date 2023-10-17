@@ -12,6 +12,8 @@ use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\dto\UserDTO;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
 use pizzashop\auth\api\domain\exception\SignInUtilisateursException;
+use pizzashop\auth\api\domain\exception\UserNotFoundException;
+use function Symfony\Component\Translation\t;
 
 class AuthService implements AuthServiceInterface {
     private JwtManager $jwtManager;
@@ -97,5 +99,16 @@ class AuthService implements AuthServiceInterface {
      */
     public function reset_password(TokenDTO $tokenDTO, CredentialsDTO $credentialsDTO): void {
         // TODO: Implement reset_password() method.
+    }
+
+
+    public function getAuthUser(TokenDTO $tokenDTO) : UserDTO{
+        $decodeToken = $this->jwtManager->validate($tokenDTO->jwt);
+        try {
+            $user = Users::where('refresh_token', $decodeToken->email)->firstOrFail();
+        }catch (Exception $e){
+            throw new UserNotFoundException();
+        }
+        return $user->toDTO();
     }
 }

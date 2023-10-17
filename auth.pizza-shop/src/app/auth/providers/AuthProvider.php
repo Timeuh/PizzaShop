@@ -11,7 +11,6 @@ use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\exception\RefreshTokenInvalideException;
 use pizzashop\auth\api\domain\service\AuthService;
-
 class AuthProvider
 {
 
@@ -69,4 +68,7 @@ class AuthProvider
             throw new RefreshTokenInvalideException();
         }
     }
+
+
+
 }
