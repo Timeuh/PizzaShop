@@ -20,7 +20,13 @@ class UserRefreshAction extends AbstractAction {
 
         try {
             $reAuth = $this->authService->refresh(new TokenDTO($refreshToken));
-            $response->getBody()->write(json_encode($reAuth));
+            $responseMessage = array(
+                "code" => 200,
+                "jwt" => $reAuth->jwt,
+                "refreshToken" => $reAuth->refreshToken
+            );
+
+            $response->getBody()->write(json_encode($responseMessage));
             return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
         } catch (RefreshUtilisateurException $e) {
             $responseMessage = array(
