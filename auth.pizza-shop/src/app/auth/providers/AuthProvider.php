@@ -14,13 +14,6 @@ use pizzashop\auth\api\domain\service\AuthService;
 class AuthProvider
 {
 
-    private AuthService $authService;
-
-    public function __construct(AuthService $authService)
-    {
-        $this->authService = $authService;
-    }
-
     public function signIn(string $email, string $pass): void
     {
         $c = new CredentialsDTO($email, $pass);
