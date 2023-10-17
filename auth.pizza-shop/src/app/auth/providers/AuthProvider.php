@@ -5,7 +5,7 @@ namespace pizzashop\auth\api\app\auth\providers;
 
 use DateTime;
 use Exception;
-use pizzashop\auth\api\app\domain\entities\Users;
+use pizzashop\auth\api\domain\entities\Users;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;

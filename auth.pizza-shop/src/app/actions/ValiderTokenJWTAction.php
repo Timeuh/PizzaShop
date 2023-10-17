@@ -6,13 +6,17 @@ use pizzashop\auth\api\app\actions\AbstractAction;
 use pizzashop\auth\api\domain\exception\AuthServiceExpiredTokenException;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideTokenException;
 use pizzashop\auth\api\domain\service\AuthService;
+use pizzashop\auth\api\domain\service\AuthServiceInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ValiderTokenJWTAction extends AbstractAction {
 
-    public function __construct(AuthService $authService) {
-        parent::__construct($authService);
+    private AuthServiceInterface $authService;
+
+    public function __construct(AuthServiceInterface $s)
+    {
+        $this->authService = $s;
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {

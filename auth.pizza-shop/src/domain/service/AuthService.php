@@ -6,7 +6,7 @@ use DateTime;
 use Exception;
 use pizzashop\auth\api\app\auth\managers\JwtManager;
 use pizzashop\auth\api\app\auth\providers\AuthProvider;
-use pizzashop\auth\api\app\domain\entities\Users;
+use pizzashop\auth\api\domain\entities\Users;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\dto\UserDTO;
@@ -19,7 +19,6 @@ use pizzashop\auth\api\domain\exception\JwtExpiredException;
 use pizzashop\auth\api\domain\exception\JwtInvalidException;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
 use pizzashop\auth\api\domain\exception\SignInException;
-use pizzashop\auth\api\domain\exception\UserNotFoundException;
 
 class AuthService implements AuthServiceInterface {
     private JwtManager $jwtManager;
