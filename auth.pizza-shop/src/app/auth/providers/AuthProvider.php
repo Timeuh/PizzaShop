@@ -21,6 +21,12 @@ class AuthProvider
         $this->authService = $authService;
     }
 
+    public function signIn(string $email, string $pass): void
+    {
+        $c = new CredentialsDTO($email, $pass);
+        $this->authService->signin($c);
+    }
+
     public function register(string $user, string $pass): void {
         try {
             $credentialsDTO = new CredentialsDTO();
