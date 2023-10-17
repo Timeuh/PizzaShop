@@ -9,9 +9,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class UserRefreshAction extends AbstractAction {
+    private AuthService $authService;
 
     public function __construct(AuthService $authService) {
-        parent::__construct($authService);
+        $this->authService = $authService;
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
