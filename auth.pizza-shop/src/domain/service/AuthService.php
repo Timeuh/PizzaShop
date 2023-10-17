@@ -68,6 +68,7 @@ class AuthService implements AuthServiceInterface {
         try{
             $user = Users::where('email', $credentialsDTO->email)->first();
 
+
             $newRefreshToken = bin2hex(random_bytes(32));
             $now = new DateTime();
             $refreshTokenExpDate = $now->modify('+1 hour');
