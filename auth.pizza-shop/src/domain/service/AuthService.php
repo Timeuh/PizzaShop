@@ -10,6 +10,9 @@ use pizzashop\auth\api\app\domain\entities\Users;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\dto\UserDTO;
+use pizzashop\auth\api\domain\exception\ActivationTokenExpiredException;
+use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
+use pizzashop\auth\api\domain\exception\InvalidActivationTokenException;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
 
 class AuthService implements AuthServiceInterface {
@@ -25,8 +28,46 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function signup(CredentialsDTO $credentialsDTO): UserDTO {
-        // TODO: Implement signup() method.
+        try {
+            $activationToken = bin2hex(random_bytes(32));
+            $refreshToken = bin2hex(random_bytes(32));
+            $resetPasswordToken = bin2hex(random_bytes(32));
+
+            // Créer un nouvel utilisateur avec les informations de CredentialsDTO
+            $user = new Users();
+            $user->email = $credentialsDTO->email;
+            $user->password = password_hash($credentialsDTO->password, PASSWORD_BCRYPT);
+            $user->username = $credentialsDTO->username;
+            $user->active = false;
+            $user->activation_token = $activationToken;
+            $user->activation_token_expiration_date = (new DateTime())->format('Y-m-d H:i:s');
+            $user->refresh_token = $refreshToken;
+            $user->refresh_token_expiration_date = (new DateTime())->format('Y-m-d H:i:s');
+            $user->reset_password_token = $resetPasswordToken;
+            $user->reset_password_token_expiration_date = (new DateTime())->format('Y-m-d H:i:s');
+            $user->save();
+
+            // Retourner un objet UserDTO avec les trois jetons générés
+            return new UserDTO(
+                $user->email,
+                $user->password,
+                $user->active,
+                $user->activation_token,
+                $user->activation_token_expiration_date,
+                $user->refresh_token,
+                $user->refresh_token_expiration_date,
+                $user->reset_password_token,
+                $user->reset_password_token_expiration_date,
+                $user->username
+            );
+        } catch (Exception $e) {
+            // Gérer les exceptions, par exemple, en lançant une exception personnalisée
+            throw new AuthServiceInvalideDonneeException();
+        }
     }
+
+
+
 
     /**
      * @inheritDoc
@@ -69,8 +110,25 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function activate_signup(TokenDTO $tokenDTO): void {
-        // TODO: Implement activate_signup() method.
+        // Récupérez l'utilisateur associé au jeton d'activation
+        $user = Users::where('activation_token', $tokenDTO->activationToken)->firstOrFail();
+
+        if ($user && !$user->active) {
+            $now = new DateTime();
+            $tokenExpDate = new DateTime($user->activation_token_expiration_date);
+
+            if ($tokenExpDate > $now) {
+                // Le jeton d'activation est valide, activez le compte de l'utilisateur
+                $user->active = true;
+                $user->save();
+            } else {
+                throw new ActivationTokenExpiredException();
+            }
+        } else {
+            throw new InvalidActivationTokenException();
+        }
     }
+
 
     /**
      * @inheritDoc

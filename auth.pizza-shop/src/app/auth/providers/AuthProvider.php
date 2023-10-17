@@ -21,13 +21,17 @@ class AuthProvider {
     }
 
     public function register(string $user, string $pass): void {
-        $c = new CredentialsDTO($user, $pass);
         try {
-            $userDTO = $this->authService->signup($c);
+            $credentialsDTO = new CredentialsDTO();
+            $credentialsDTO->email = $user;
+            $credentialsDTO->password = $pass;
+
+            $this->authService->signup($credentialsDTO);
         } catch (Exception $e) {
-            throw new AuthServiceInvalideDonneeException($e);
+            throw new AuthServiceInvalideDonneeException();
         }
     }
+
 
     public function activate(string $token): void {
         $t = new TokenDTO($token);
