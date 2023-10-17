@@ -11,8 +11,12 @@ use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\dto\UserDTO;
 use pizzashop\auth\api\domain\exception\ActivationTokenExpiredException;
+use pizzashop\auth\api\domain\exception\AuthServiceExpiredTokenException;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
+use pizzashop\auth\api\domain\exception\AuthServiceInvalideTokenException;
 use pizzashop\auth\api\domain\exception\InvalidActivationTokenException;
+use pizzashop\auth\api\domain\exception\JwtExpiredException;
+use pizzashop\auth\api\domain\exception\JwtInvalidException;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
 use pizzashop\auth\api\domain\exception\SignInUtilisateursException;
 use pizzashop\auth\api\domain\exception\UserNotFoundException;
@@ -98,13 +102,14 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function validate(TokenDTO $tokenDTO): UserDTO {
-        $decodeToken = $this->jwtManager->validate($tokenDTO->jwt);
         try {
-            $user = Users::where('refresh_token', $decodeToken->email)->firstOrFail();
-        }catch (Exception $e){
-            throw new UserNotFoundException();
+        $payload = $this->jwtManager->validate($tokenDTO->jwt);
+        }catch (JwtExpiredException $e){
+            throw new AuthServiceExpiredTokenException;
+        }catch (JwtInvalidException $e) {
+            throw new AuthServiceInvalideTokenException;
         }
-        return $user->toDTO();
+        return new UserDTO($payload['email'], $payload['username']);
     }
 
     /**

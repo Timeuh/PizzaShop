@@ -14,6 +14,8 @@ use pizzashop\auth\api\domain\service\AuthService;
 class AuthProvider
 {
 
+    private Users $currentAuthenticatedUser;
+
     private AuthService $authService;
 
     public function __construct(AuthService $authService)
@@ -48,6 +50,16 @@ class AuthProvider
             throw new AuthServiceInvalideDonneeException();
         }
     }
+
+    public function getAuthenticatedUser(): array
+    {
+        return [
+            'username' => $this->currentAuthenticatedUser->username,
+            'email' => $this->currentAuthenticatedUser->email,
+            'refresh_token' => $this->currentAuthenticatedUser->refresh_token,
+        ];
+    }
+
 
     /**
      * Vérifie si un token est présent dans la bd pour un utilisateur
