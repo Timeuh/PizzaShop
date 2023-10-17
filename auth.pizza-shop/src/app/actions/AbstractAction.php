@@ -1,12 +1,12 @@
 <?php
 
-namespace pizzashop\shop\app\actions;
+namespace pizzashop\auth\api\app\actions;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract  class AbstractAction
+abstract class AbstractAction
 {
 
     protected ContainerInterface $container;

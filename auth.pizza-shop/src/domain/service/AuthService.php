@@ -14,7 +14,7 @@ use pizzashop\auth\api\domain\exception\ActivationTokenExpiredException;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\exception\InvalidActivationTokenException;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
-use pizzashop\auth\api\domain\exception\SignInUtilisateursException;
+use pizzashop\auth\api\domain\exception\SignInException;
 use pizzashop\auth\api\domain\exception\UserNotFoundException;
 
 class AuthService implements AuthServiceInterface {
@@ -72,12 +72,9 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function signin(CredentialsDTO $credentialsDTO): TokenDTO {
+        $this->authProvider->checkCredentials($credentialsDTO->email,$credentialsDTO->password);
         try {
             $user = Users::where('email', $credentialsDTO->email)->firstOfFail();
-
-            if(!password_verify($credentialsDTO->password, $user->password)){
-                throw new SignInUtilisateursException();
-            }
 
             $newRefreshToken = bin2hex(random_bytes(32));
             $now = new DateTime();
@@ -89,8 +86,9 @@ class AuthService implements AuthServiceInterface {
 
             $token = $this->jwtManager->create(['username' => $user->username, 'email' => $user->email]);
             return new TokenDTO($newRefreshToken, $token);
+
         }catch (Exception $e){
-            throw new SignInUtilisateursException();
+            throw new SignInException();
         }
     }
 
