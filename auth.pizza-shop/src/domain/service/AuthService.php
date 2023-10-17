@@ -6,7 +6,7 @@ use DateTime;
 use Exception;
 use pizzashop\auth\api\app\auth\managers\JwtManager;
 use pizzashop\auth\api\app\auth\providers\AuthProvider;
-use pizzashop\auth\api\app\domain\entities\Users;
+use pizzashop\auth\api\domain\entities\Users;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\dto\UserDTO;
@@ -53,14 +53,6 @@ class AuthService implements AuthServiceInterface {
             return new UserDTO(
                 $user->email,
                 $user->password,
-                $user->active,
-                $user->activation_token,
-                $user->activation_token_expiration_date,
-                $user->refresh_token,
-                $user->refresh_token_expiration_date,
-                $user->reset_password_token,
-                $user->reset_password_token_expiration_date,
-                $user->username
             );
         } catch (Exception $e) {
             // Gérer les exceptions, par exemple, en lançant une exception personnalisée
@@ -73,8 +65,8 @@ class AuthService implements AuthServiceInterface {
      */
     public function signin(CredentialsDTO $credentialsDTO): TokenDTO {
         $this->authProvider->checkCredentials($credentialsDTO->email,$credentialsDTO->password);
-        try {
-            $user = Users::where('email', $credentialsDTO->email)->firstOfFail();
+        try{
+            $user = Users::where('email', $credentialsDTO->email)->first();
 
             $newRefreshToken = bin2hex(random_bytes(32));
             $now = new DateTime();
