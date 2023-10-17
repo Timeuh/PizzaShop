@@ -2,6 +2,7 @@
 
 namespace auth\app\auth;
 
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\ExpiredException;
@@ -17,16 +18,23 @@ class JwtManager
     {
         try {
             $secret = bin2hex(random_bytes(32));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         file_put_contents('auth.env', 'JWT_SECRET=' . $secret . PHP_EOL, FILE_APPEND);
 
         $payload = [
             "iss" => "pizza-shop.auth.db",
             "aud" => "api.pizza-shop",
-            "iat" => time(), 'exp'=>time()+getenv('JWT_EXPIRATION'),
-            "uid" => $user->id,
-            "lvl" => $user->access
+            "iat" => time(),
+            "exp" => time()+getenv('JWT_EXPIRATION'),
+            "upr" => [
+                "username" => $user->username,
+                "mail" => $user->mail,
+            ],
+            "data" => [
+                "uid" => $user->id,
+                "lvl" => $user->access,
+            ]
         ];
 
         $token = JWT::encode($payload,getenv('JWT_SECRET'), 'HS512');
