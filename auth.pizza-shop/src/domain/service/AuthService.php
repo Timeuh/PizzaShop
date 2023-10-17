@@ -14,6 +14,8 @@ use pizzashop\auth\api\domain\exception\ActivationTokenExpiredException;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\exception\InvalidActivationTokenException;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
+use pizzashop\auth\api\domain\exception\SignInUtilisateursException;
+use pizzashop\auth\api\domain\exception\UserNotFoundException;
 
 class AuthService implements AuthServiceInterface {
     private JwtManager $jwtManager;
@@ -73,7 +75,26 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function signin(CredentialsDTO $credentialsDTO): TokenDTO {
-        // TODO: Implement signin() method.
+        try {
+            $user = Users::where('email', $credentialsDTO->email)->firstOfFail();
+
+            if(!password_verify($credentialsDTO->password, $user->password)){
+                throw new SignInUtilisateursException();
+            }
+
+            $newRefreshToken = bin2hex(random_bytes(32));
+            $now = new DateTime();
+            $refreshTokenExpDate = $now->modify('+1 hour');
+
+            $user->refresh_token = $newRefreshToken;
+            $user->refresh_token_expiration_date = $refreshTokenExpDate->format('Y-m-d H:i:s');
+            $user->save();
+
+            $token = $this->jwtManager->create(['username' => $user->username, 'email' => $user->email]);
+            return new TokenDTO($newRefreshToken, $token);
+        }catch (Exception $e){
+            throw new SignInUtilisateursException();
+        }
     }
 
     /**
@@ -135,5 +156,16 @@ class AuthService implements AuthServiceInterface {
      */
     public function reset_password(TokenDTO $tokenDTO, CredentialsDTO $credentialsDTO): void {
         // TODO: Implement reset_password() method.
+    }
+
+
+    public function getAuthUser(TokenDTO $tokenDTO) : UserDTO{
+        $decodeToken = $this->jwtManager->validate($tokenDTO->jwt);
+        try {
+            $user = Users::where('refresh_token', $decodeToken->email)->firstOrFail();
+        }catch (Exception $e){
+            throw new UserNotFoundException();
+        }
+        return $user->toDTO();
     }
 }

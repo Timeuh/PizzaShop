@@ -11,12 +11,13 @@ use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\exception\RefreshTokenInvalideException;
 use pizzashop\auth\api\domain\service\AuthService;
-
-class AuthProvider {
+class AuthProvider
+{
 
     private AuthService $authService;
 
-    public function __construct(AuthService $authService) {
+    public function __construct(AuthService $authService)
+    {
         $this->authService = $authService;
     }
 
@@ -32,8 +33,8 @@ class AuthProvider {
         }
     }
 
-
-    public function activate(string $token): void {
+    public function activate(string $token): void
+    {
         $t = new TokenDTO($token);
         try {
             $this->authService->activate_signup($t);
@@ -49,7 +50,8 @@ class AuthProvider {
      * @return void
      * @throws RefreshTokenInvalideException si le token est introuvable en bd ou dépassé
      */
-    public function checkToken(string $token) {
+    public function checkToken(string $token)
+    {
         try {
             $user = Users::where('refresh_token', $token)->firstOrFail();
             $tokenExpDate = new DateTime($user->refresh_token_expiration_date);
