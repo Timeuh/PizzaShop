@@ -3,7 +3,6 @@
 namespace pizzashop\auth\api\app\auth\providers;
 
 
-use DateTime;
 use Exception;
 use pizzashop\auth\api\app\domain\entities\Users;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
@@ -11,6 +10,7 @@ use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\exception\RefreshTokenInvalideException;
 use pizzashop\auth\api\domain\service\AuthService;
+
 class AuthProvider
 {
 
@@ -59,13 +59,7 @@ class AuthProvider
     public function checkToken(string $token)
     {
         try {
-            $user = Users::where('refresh_token', $token)->firstOrFail();
-            $tokenExpDate = new DateTime($user->refresh_token_expiration_date);
-            $now = new DateTime();
-
-            if ($tokenExpDate < $now) {
-                throw new RefreshTokenInvalideException();
-            }
+            Users::where('refresh_token', $token)->where('refresh_token_expiration_date', '>', time())->firstOrFail();
         } catch (Exception $e) {
             throw new RefreshTokenInvalideException();
         }
