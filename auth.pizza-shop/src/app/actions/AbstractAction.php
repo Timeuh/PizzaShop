@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractAction {
-    private AuthService $authService;
+    protected AuthService $authService;
 
     public function __construct(AuthService $authService) {
         $this->authService = $authService;
