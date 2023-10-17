@@ -1,10 +1,9 @@
 <?php
 
-namespace pizzashop\auth\api\app\domain\entities;
+namespace pizzashop\auth\api\domain\entities;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use pizzashop\auth\api\domain\dto\UserDTO;
-use pizzashop\shop\domain\dto\catalogue\ProduitDTO;
 
 class Users extends Model
 {
