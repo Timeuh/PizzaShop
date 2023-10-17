@@ -68,9 +68,6 @@ class AuthService implements AuthServiceInterface {
         }
     }
 
-
-
-
     /**
      * @inheritDoc
      */
@@ -101,7 +98,13 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function validate(TokenDTO $tokenDTO): UserDTO {
-        // TODO: Implement validate() method.
+        $decodeToken = $this->jwtManager->validate($tokenDTO->jwt);
+        try {
+            $user = Users::where('refresh_token', $decodeToken->email)->firstOrFail();
+        }catch (Exception $e){
+            throw new UserNotFoundException();
+        }
+        return $user->toDTO();
     }
 
     /**
@@ -150,22 +153,10 @@ class AuthService implements AuthServiceInterface {
         }
     }
 
-
     /**
      * @inheritDoc
      */
     public function reset_password(TokenDTO $tokenDTO, CredentialsDTO $credentialsDTO): void {
         // TODO: Implement reset_password() method.
-    }
-
-
-    public function getAuthUser(TokenDTO $tokenDTO) : UserDTO{
-        $decodeToken = $this->jwtManager->validate($tokenDTO->jwt);
-        try {
-            $user = Users::where('refresh_token', $decodeToken->email)->firstOrFail();
-        }catch (Exception $e){
-            throw new UserNotFoundException();
-        }
-        return $user->toDTO();
     }
 }
