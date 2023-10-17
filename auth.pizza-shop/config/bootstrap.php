@@ -1,5 +1,6 @@
 <?php
 
+use DI\ContainerBuilder;
 use Illuminate\Database\Capsule\Manager as DB;
 use pizzashop\auth\api\domain\exception\JwtSecretEcritureException;
 use Slim\Factory\AppFactory;
@@ -14,6 +15,19 @@ $envFilePath = $envFileDir.'/.env';
 // initialise dotenv pour accéder au .env partout dans l'app
 $dotenv = Dotenv\Dotenv::createImmutable($envFileDir);
 $dotenv->load();
+
+//Container
+$builder = new ContainerBuilder();
+
+$builder->addDefinitions(
+    include('dependencies/services_dependencies.php'),
+    include('dependencies/action_dependencies.php')
+);
+
+$c = $builder->build();
+
+$app = AppFactory::createFromContainer($c);
+$container = $app->getContainer();
 
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
