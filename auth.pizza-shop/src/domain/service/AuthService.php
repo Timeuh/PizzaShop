@@ -68,8 +68,9 @@ class AuthService implements AuthServiceInterface {
      */
     public function signin(CredentialsDTO $credentialsDTO): TokenDTO {
         $this->authProvider->checkCredentials($credentialsDTO->email,$credentialsDTO->password);
-        try {
-            $user = Users::where('email', $credentialsDTO->email)->firstOfFail();
+        try{
+            $user = Users::where('email', $credentialsDTO->email)->first();
+
 
             $newRefreshToken = bin2hex(random_bytes(32));
             $now = new DateTime();

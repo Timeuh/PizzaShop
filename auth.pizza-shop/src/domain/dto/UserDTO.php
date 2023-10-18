@@ -3,8 +3,6 @@
 namespace pizzashop\auth\api\domain\dto;
 
 
-use DateTime;
-
 class UserDTO extends DTO {
     public string $email;
     public string $username;

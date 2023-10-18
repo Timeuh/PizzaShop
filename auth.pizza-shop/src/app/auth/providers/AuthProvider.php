@@ -11,25 +11,25 @@ use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\exception\CredentialsException;
 use pizzashop\auth\api\domain\exception\RefreshTokenInvalideException;
-use pizzashop\auth\api\domain\service\AuthService;
+
 class AuthProvider
 {
     private Users $currentAuthenticatedUser;
 
     public function checkCredentials(string $email, string $pass): void
     {
-        try {
-            $user = Users::where('email', $email)->firstOfFail();
+        $user = Users::where('email', $email)->first();
+        if ($user == null) {
+            throw new CredentialsException();
+        }
 
-            if (!password_verify($pass, $user->password)) {
-                throw new CredentialsException();
-            }
-        }catch (Exception $e){
+        if (!password_verify($pass, $user->password)) {
             throw new CredentialsException();
         }
     }
 
-    public function register(string $user, string $pass): void {
+    public function register(string $user, string $pass): void
+    {
         try {
             $credentialsDTO = new CredentialsDTO();
             $credentialsDTO->email = $user;
@@ -82,4 +82,5 @@ class AuthProvider
             throw new RefreshTokenInvalideException();
         }
     }
+
 }
