@@ -14,17 +14,19 @@ use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
 use pizzashop\auth\api\domain\exception\CredentialsException;
 use pizzashop\auth\api\domain\exception\RefreshTokenInvalideException;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
+use pizzashop\auth\api\domain\exception\SignInException;
 
 class AuthProvider
 {
     public function checkCredentials(string $email, string $pass): void
     {
-        $user = Users::where('email', $email)->first();
-        if ($user == null) {
-            throw new CredentialsException();
-        }
+        try {
+            $user = Users::where('email', $email)->firstOrFail();
 
-        if (!password_verify($pass, $user->password)) {
+            if (!password_verify($pass, $user->password)) {
+                throw new CredentialsException();
+            }
+        } catch (Exception $e) {
             throw new CredentialsException();
         }
     }
@@ -74,23 +76,37 @@ class AuthProvider
         }
     }
 
-    public function regenToken(TokenDTO $tokenDTO, JwtManager $jwtManager): TokenDTO {
-        try {
-            $user = Users::where('refresh_token', $tokenDTO->refreshToken)->firstOrFail();
 
-            $newRefreshToken = bin2hex(random_bytes(32));
-            $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
-            $refreshTokenExpDate = $now->modify('+1 hour');
+    public function genToken(Users $user, JwtManager $jwtManager): TokenDTO
+    {
+        $newRefreshToken = bin2hex(random_bytes(32));
+        $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
+        $refreshTokenExpDate = $now->modify('+1 hour');
 
-            $user->refresh_token = $newRefreshToken;
-            $user->refresh_token_expiration_date = $refreshTokenExpDate->format('Y-m-d H:i:s');
-            $user->save();
+        $user->refresh_token = $newRefreshToken;
+        $user->refresh_token_expiration_date = $refreshTokenExpDate->format('Y-m-d H:i:s');
+        $user->save();
 
-            $token = $jwtManager->create(['username' => $user->username, 'email' => $user->email]);
-            return new TokenDTO($newRefreshToken, $token);
-        } catch (Exception $e) {
-            throw new RefreshUtilisateurException();
+        $token = $jwtManager->create(['username' => $user->username, 'email' => $user->email]);
+        return new TokenDTO($newRefreshToken, $token);
+    }
+
+    public function getUser(string $email, string $token): Users
+    {
+        if ($email == '') {
+            try {
+                return Users::where('refresh_token', $token)->firstOrFail();
+            } catch (Exception $e) {
+                throw new RefreshUtilisateurException();
+            }
+        } else {
+            try {
+                return Users::where('email', $email)->firstOrFail();
+            } catch (Exception $e) {
+                throw new SignInException();
+            }
         }
+
     }
 
 }

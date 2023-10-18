@@ -64,24 +64,7 @@ class AuthService implements AuthServiceInterface {
      */
     public function signin(CredentialsDTO $credentialsDTO): TokenDTO {
         $this->authProvider->checkCredentials($credentialsDTO->email,$credentialsDTO->password);
-        try{
-            $user = Users::where('email', $credentialsDTO->email)->first();
-
-
-            $newRefreshToken = bin2hex(random_bytes(32));
-            $now = new DateTime();
-            $refreshTokenExpDate = $now->modify('+1 hour');
-
-            $user->refresh_token = $newRefreshToken;
-            $user->refresh_token_expiration_date = $refreshTokenExpDate->format('Y-m-d H:i:s');
-            $user->save();
-
-            $token = $this->jwtManager->create(['username' => $user->username, 'email' => $user->email]);
-            return new TokenDTO($newRefreshToken, $token);
-
-        }catch (Exception $e){
-            throw new SignInException();
-        }
+        return $this->authProvider->genToken($this->authProvider->getUser($credentialsDTO->email,''), $this->jwtManager);
     }
 
     /**
@@ -102,7 +85,7 @@ class AuthService implements AuthServiceInterface {
      */
     public function refresh(TokenDTO $tokenDTO): TokenDTO {
         $this->authProvider->checkToken($tokenDTO->refreshToken);
-        return $this->authProvider->regenToken($tokenDTO, $this->jwtManager);
+        return $this->authProvider->genToken($this->authProvider->getUser('',$tokenDTO->refreshToken), $this->jwtManager);
     }
 
     /**
