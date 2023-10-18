@@ -14,8 +14,7 @@ class ValiderTokenJWTAction extends AbstractAction {
 
     private AuthServiceInterface $authService;
 
-    public function __construct(AuthServiceInterface $s)
-    {
+    public function __construct(AuthServiceInterface $s) {
         $this->authService = $s;
     }
 

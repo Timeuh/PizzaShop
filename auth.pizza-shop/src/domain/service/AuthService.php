@@ -55,15 +55,7 @@ class AuthService implements AuthServiceInterface {
             // Retourner un objet UserDTO avec les trois jetons générés
             return new UserDTO(
                 $user->email,
-                $user->password,
-                $user->active,
-                $user->activation_token,
-                $user->activation_token_expiration_date,
-                $user->refresh_token,
-                $user->refresh_token_expiration_date,
-                $user->reset_password_token,
-                $user->reset_password_token_expiration_date,
-                $user->username
+                $user->username,
             );
         } catch (Exception $e) {
             // Gérer les exceptions, par exemple, en lançant une exception personnalisée
