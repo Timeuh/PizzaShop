@@ -3,6 +3,7 @@
 namespace pizzashop\auth\api\app\actions;
 
 use pizzashop\auth\api\domain\dto\TokenDTO;
+use pizzashop\auth\api\domain\exception\RefreshTokenInvalideException;
 use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
 use pizzashop\auth\api\domain\service\AuthService;
 use Psr\Http\Message\ResponseInterface;
@@ -29,7 +30,7 @@ class UserRefreshAction extends AbstractAction {
 
             $response->getBody()->write(json_encode($responseMessage));
             return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
-        } catch (RefreshUtilisateurException $e) {
+        } catch (RefreshUtilisateurException | RefreshTokenInvalideException $e) {
             $responseMessage = array(
                 "message" => "401 Refresh token error",
                 "exception" => array(
