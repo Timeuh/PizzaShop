@@ -1,9 +1,9 @@
 <?php
 
-use pizzashop\auth\api\domain\service\AuthService;
-use Psr\Container\ContainerInterface;
 use pizzashop\auth\api\app\auth\managers\JwtManager;
 use pizzashop\auth\api\app\auth\providers\AuthProvider;
+use pizzashop\auth\api\domain\service\AuthService;
+use Psr\Container\ContainerInterface;
 
 return[
 
