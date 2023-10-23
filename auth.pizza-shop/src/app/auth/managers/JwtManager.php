@@ -38,11 +38,11 @@ class JwtManager {
      *
      * @param string $token le token jwt sous forme de string
      * @return stdClass le payload du jwt sous forme d'objet PHP
-     * @throws JwtInvalidException si le token est expiré, invalide ou indéchiffrable
+     * @throws JwtInvalidException|JwtExpiredException si le token est expiré, invalide ou indéchiffrable
      */
     public function validate(string $token): stdClass {
         try {
-            return JWT::decode($token, new Key($_ENV('JWT_SECRET'), 'HS512'));
+            return JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS512'));
         } catch (ExpiredException $e) {
             throw new JwtExpiredException();
         } catch (SignatureInvalidException $e) {
