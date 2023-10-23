@@ -2,10 +2,9 @@
 
 namespace pizzashop\auth\api\app\actions;
 
-use pizzashop\auth\api\app\actions\AbstractAction;
+use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\exception\AuthServiceExpiredTokenException;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideTokenException;
-use pizzashop\auth\api\domain\service\AuthService;
 use pizzashop\auth\api\domain\service\AuthServiceInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,7 +22,7 @@ class ValiderTokenJWTAction extends AbstractAction {
         try {
             $header = $request->getHeader('Authorization')[0];
             $token = str_replace('Bearer ', '', $header);
-            $pUser = $this->authService->validate($token);
+            $pUser = $this->authService->validate(new TokenDTO('', $token));
         } catch (AuthServiceExpiredTokenException $e) {
             return $response->withStatus(401)->withJson(['error' => 'Token expiré']);
         } catch (AuthServiceInvalideTokenException $e) {
