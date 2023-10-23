@@ -3,6 +3,7 @@
 namespace pizzashop\auth\api\domain\service;
 
 use DateTime;
+use DomainException;
 use Exception;
 use pizzashop\auth\api\app\auth\managers\JwtManager;
 use pizzashop\auth\api\app\auth\providers\AuthProvider;
@@ -96,7 +97,7 @@ class AuthService implements AuthServiceInterface {
         $payload = $this->jwtManager->validate($tokenDTO->jwt);
         }catch (JwtExpiredException $e){
             throw new AuthServiceExpiredTokenException;
-        }catch (JwtInvalidException $e) {
+        }catch (JwtInvalidException | DomainException $e) {
             throw new AuthServiceInvalideTokenException;
         }
         return new UserDTO($payload->upr->email, $payload->upr->username);
