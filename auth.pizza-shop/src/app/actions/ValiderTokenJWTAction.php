@@ -23,12 +23,15 @@ class ValiderTokenJWTAction extends AbstractAction {
             $header = $request->getHeader('Authorization')[0];
             $token = str_replace('Bearer ', '', $header);
             $pUser = $this->authService->validate(new TokenDTO('', $token));
+            $response->getBody()->write(json_encode($pUser));
         } catch (AuthServiceExpiredTokenException $e) {
-            return $response->withStatus(401)->withJson(['error' => 'Token expiré']);
+            $response->getBody()->write(json_encode(['error' => 'Token expiré']));
+            return $response->withStatus(401)->withHeader('Content-Type','application/json');
         } catch (AuthServiceInvalideTokenException $e) {
-            return $response->withStatus(401)->withJson(['error' => 'Token invalide']);
+            $response->getBody()->write(json_encode(['error' => 'Token invalide']));
+            return $response->withStatus(401)->withHeader('Content-Type','application/json');
         }
 
-        return $response->withStatus(200)->withJson($pUser);
+        return $response->withStatus(200)->withHeader('Content-Type','application/json');
     }
 }
