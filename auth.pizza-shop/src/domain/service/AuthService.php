@@ -3,6 +3,7 @@
 namespace pizzashop\auth\api\domain\service;
 
 use DateTime;
+use DomainException;
 use Exception;
 use pizzashop\auth\api\app\auth\managers\JwtManager;
 use pizzashop\auth\api\app\auth\providers\AuthProvider;
@@ -11,10 +12,14 @@ use pizzashop\auth\api\domain\dto\TokenDTO;
 use pizzashop\auth\api\domain\dto\UserDTO;
 use pizzashop\auth\api\domain\entities\Users;
 use pizzashop\auth\api\domain\exception\ActivationTokenExpiredException;
+use pizzashop\auth\api\domain\exception\AuthServiceExpiredTokenException;
 use pizzashop\auth\api\domain\exception\AuthServiceInvalideDonneeException;
+use pizzashop\auth\api\domain\exception\AuthServiceInvalideTokenException;
 use pizzashop\auth\api\domain\exception\InvalidActivationTokenException;
+use pizzashop\auth\api\domain\exception\JwtExpiredException;
+use pizzashop\auth\api\domain\exception\JwtInvalidException;
+use pizzashop\auth\api\domain\exception\RefreshUtilisateurException;
 use pizzashop\auth\api\domain\exception\SignInException;
-use pizzashop\auth\api\domain\exception\UserNotFoundException;
 
 class AuthService implements AuthServiceInterface {
     private JwtManager $jwtManager;
@@ -51,7 +56,7 @@ class AuthService implements AuthServiceInterface {
             // Retourner un objet UserDTO avec les trois jetons générés
             return new UserDTO(
                 $user->email,
-                $user->password,
+                $user->username,
             );
         } catch (Exception $e) {
             // Gérer les exceptions, par exemple, en lançant une exception personnalisée
@@ -71,13 +76,14 @@ class AuthService implements AuthServiceInterface {
      * @inheritDoc
      */
     public function validate(TokenDTO $tokenDTO): UserDTO {
-        $decodeToken = $this->jwtManager->validate($tokenDTO->jwt);
         try {
-            $user = Users::where('refresh_token', $decodeToken->email)->firstOrFail();
-        }catch (Exception $e){
-            throw new UserNotFoundException();
+        $payload = $this->jwtManager->validate($tokenDTO->jwt);
+        }catch (JwtExpiredException $e){
+            throw new AuthServiceExpiredTokenException;
+        }catch (JwtInvalidException | DomainException $e) {
+            throw new AuthServiceInvalideTokenException;
         }
-        return $user->toDTO();
+        return new UserDTO($payload->upr->email, $payload->upr->username);
     }
 
     /**

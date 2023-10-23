@@ -18,6 +18,8 @@ use pizzashop\auth\api\domain\exception\SignInException;
 
 class AuthProvider
 {
+    private Users $currentAuthenticatedUser;
+
     public function checkCredentials(string $email, string $pass): void
     {
         try {
@@ -53,6 +55,16 @@ class AuthProvider
             throw new AuthServiceInvalideDonneeException();
         }
     }
+
+    public function getAuthenticatedUser(): array
+    {
+        return [
+            'username' => $this->currentAuthenticatedUser->username,
+            'email' => $this->currentAuthenticatedUser->email,
+            'refresh_token' => $this->currentAuthenticatedUser->refresh_token,
+        ];
+    }
+
 
     /**
      * Vérifie si un token est présent dans la bd pour un utilisateur
