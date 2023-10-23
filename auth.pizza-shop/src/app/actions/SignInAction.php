@@ -2,11 +2,11 @@
 
 namespace pizzashop\auth\api\app\actions;
 
+use Exception;
 use pizzashop\auth\api\domain\dto\CredentialsDTO;
 use pizzashop\auth\api\domain\service\AuthServiceInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Exception;
 
 class SignInAction extends AbstractAction
 {

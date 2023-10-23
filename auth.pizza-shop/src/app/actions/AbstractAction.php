@@ -18,5 +18,4 @@ abstract class AbstractAction
 
 
     public abstract function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface;
-
 }
