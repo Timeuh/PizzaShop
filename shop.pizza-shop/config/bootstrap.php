@@ -2,6 +2,7 @@
 
 use DI\ContainerBuilder;
 use Illuminate\Database\Capsule\Manager as DB;
+use pizzashop\shop\app\middlewares\MiddleAuth;
 use Slim\Factory\AppFactory;
 
 session_start();
@@ -27,6 +28,7 @@ $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, false, false);
 $app->setBasePath('');
+
 
 // initialise Eloquent avec les fichiers de config
 $db = new DB();

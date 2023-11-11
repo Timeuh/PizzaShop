@@ -24,7 +24,7 @@ class CreerCommandeAction extends AbstractAction {
     public function __invoke(Request $request, Response $response, $args) : Response {
         $body = $request->getParsedBody();
 
-        $commande = new CommandeDTO($body['type_livraison'], $body['mail_client'], $body['items']);
+        $commande = new CommandeDTO($body['type_livraison'], $request->getAttribute('mail'), $body['items']);
 
         try {
             $commandeCreee = $this->serviceCommande->creerCommande($commande);
