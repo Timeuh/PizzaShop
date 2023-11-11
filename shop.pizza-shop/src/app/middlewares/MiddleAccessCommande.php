@@ -4,44 +4,38 @@ namespace pizzashop\shop\app\middlewares;
 
 use pizzashop\shop\domain\exception\TokenInvalidException;
 use pizzashop\shop\domain\service\authentification\ServiceAuth;
+use pizzashop\shop\domain\service\commande\ServiceCommande;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response;
 use Slim\Routing\RouteContext;
 
-class MiddleAuth
+class MiddleAccessCommande
 {
 
-    private ServiceAuth $serviceAuth;
+    private ServiceCommande $serviceCommande;
 
     /**
      * @param ServiceAuth $serviceAuth
      */
-    public function __construct(ServiceAuth $serviceAuth)
+    public function __construct(ServiceCommande $serviceCommande)
     {
-        $this->serviceAuth = $serviceAuth;
+        $this->serviceCommande = $serviceCommande;
     }
 
 
     public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $headers = $request->getHeader('Authorization');
+        $routeContext = RouteContext::fromRequest($request);
+        $route = $routeContext->getRoute();
+        $commandeId = $route->getArguments()['id_commande'];
 
-        if (count($headers) == 0){
+        try {
+            $commande = $this->serviceCommande->accederCommande($commandeId);
+        }catch (\Exception $e){
             $responseMessage = array(
-                "message" => "Le token est absent",
-            );
-            $response = new Response();
-            $response->getBody()->write(json_encode($responseMessage));
-            return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-        }
-
-        try{
-            $mail = $this->serviceAuth->checkTokenJwt($headers);
-        }catch (TokenInvalidException $e){
-            $responseMessage = array(
-                "message" => "Le token est invalide",
+                "message" => "La commande n'existe pas",
                 "exception" => array(
                     "type" => $e::class,
                     "code" => $e->getCode(),
@@ -55,7 +49,16 @@ class MiddleAuth
             return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
         }
 
-        $request = $request->withAttribute('mail',$mail['email']);
+        if ($commande->mail_client != $request->getAttribute('mail')){
+            $responseMessage = array(
+                "message" => "La commande ne vous appartient pas",
+            );
+            $response = new Response();
+            $response->getBody()->write(json_encode($responseMessage));
+            return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
+        }
+
+
 
         return $handler->handle($request);
 
