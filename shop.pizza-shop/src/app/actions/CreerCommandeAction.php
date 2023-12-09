@@ -4,7 +4,7 @@ namespace pizzashop\shop\app\actions;
 
 use Error;
 use Exception;
-use pizzashop\shop\domain\dto\commande\CommandeDTO;
+use pizzashop\shop\domain\dto\CommandeDTO;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
 use pizzashop\shop\domain\exception\ValidationCommandeException;
 use pizzashop\shop\domain\service\commande\ICommander;

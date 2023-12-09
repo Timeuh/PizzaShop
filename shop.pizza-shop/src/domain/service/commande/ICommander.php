@@ -2,7 +2,7 @@
 
 namespace pizzashop\shop\domain\service\commande;
 
-use pizzashop\shop\domain\dto\commande\CommandeDTO;
+use pizzashop\shop\domain\dto\CommandeDTO;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 

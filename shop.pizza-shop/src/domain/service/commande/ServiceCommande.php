@@ -4,10 +4,10 @@ namespace pizzashop\shop\domain\service\commande;
 
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use pizzashop\shop\domain\dto\commande\CommandeDTO;
-use pizzashop\shop\domain\entities\commande\Commande;
-use pizzashop\shop\domain\entities\commande\EtatCommande;
-use pizzashop\shop\domain\entities\commande\Item;
+use pizzashop\shop\domain\dto\CommandeDTO;
+use pizzashop\shop\domain\entities\Commande;
+use pizzashop\shop\domain\entities\EtatCommande;
+use pizzashop\shop\domain\entities\Item;
 use pizzashop\shop\domain\exception\CommandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
