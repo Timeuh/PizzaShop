@@ -12,7 +12,7 @@ use pizzashop\shop\app\middlewares\MiddleAuth;
 
 return function( \Slim\App $app):void {
 
-    $app->post('/produits[/]', GetProduitsAction::class)
+    $app->get('/produits[/]', GetProduitsAction::class)
         ->setName('list_produits');
 
     $app->get('/produits/{id_produit}[/]', GetProduitByIdAction::class)

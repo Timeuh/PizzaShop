@@ -2,15 +2,64 @@
 
 namespace pizzashop\cat\app\actions;
 
-use pizzashop\cat\app\actions\AbstractAction;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Exception;
+use pizzashop\cat\domain\service\IBrowserCatalogue;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
-class GetProduitsAction extends AbstractAction
-{
 
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
-        // TODO: Implement __invoke() method.
+class GetProduitsAction extends AbstractAction {
+
+    private IBrowserCatalogue $serviceCatalogue;
+
+    public function __construct(IBrowserCatalogue $s) {
+        $this->serviceCatalogue = $s;
     }
+
+    public function __invoke(Request $request, Response $response, $args): Response {
+
+        try {
+            $produits = $this->serviceCatalogue->getAllProduct();
+        } catch (Exception $e) {
+            $responseMessage = array(
+                "message" => "404 Not Found",
+                "exception" => array(
+                    "type" => $e::class,
+                    "code" => $e->getCode(),
+                    "message" => $e->getMessage(),
+                    "file" => $e->getFile(),
+                    "line" => $e->getLine()
+                ));
+
+            $response->getBody()->write(json_encode($responseMessage));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
+
+        $data = [
+            'type' => 'resource',
+            ];
+        foreach ($produits as $p){
+            $data['Produits'][] = [
+                'Produit'=>[
+                    'id'=>$p->id,
+                'numero'=>$p->numero_produit,
+                'libelle'=>$p->libelle_produit,
+                    'description'=>$p->description_produit
+            ],
+            'links' => [
+                'self' => [
+                    'href' => '/produit/' . $p->id,
+                ],
+            ],
+        ];
+}
+
+        $response->getBody()->write(json_encode($data));
+        return
+            $response->withHeader('Content-Type', 'application/json')
+                ->withStatus(200);
+
+
+    }
+
 }

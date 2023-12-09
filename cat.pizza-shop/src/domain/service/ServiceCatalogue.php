@@ -22,8 +22,10 @@ class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
             throw new ProduitNonTrouveeException($num);
         }
         return new ProduitDTO(
+            $produit->id,
             $produit->numero,
             $produit->libelle,
+            $produit->description,
             $produit->categorie->libelle,
             $produit->tailles[$taille-1]->libelle,
             $produit->tailles[$taille-1]->pivot->tarif,
@@ -52,8 +54,15 @@ class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
         }
         $produitsDTO = [];
         foreach ($produits as $produit) {
-            $produitsDTO[] = new ProduitDTO($produit->id, $produit->nom, $produit->description, $produit->prix, $produit->taille);
-        }
+            $produitsDTO[] = new ProduitDTO(
+                $produit->id,
+                $produit->numero,
+                $produit->libelle,
+                $produit->description,
+                "",
+                "",
+                0
+            ); }
         return $produitsDTO;
     }
 
