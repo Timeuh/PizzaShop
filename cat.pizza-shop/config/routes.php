@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+use pizzashop\cat\app\actions\GetProduitByCategorieAction;
+use pizzashop\cat\app\actions\GetProduitByIdAction;
+use pizzashop\cat\app\actions\GetProduitsAction;
 use pizzashop\shop\app\actions\AccederCommandeAction;
 use pizzashop\shop\app\actions\CreerCommandeAction;
 use pizzashop\shop\app\actions\ValiderCommandeAction;
@@ -9,17 +12,15 @@ use pizzashop\shop\app\middlewares\MiddleAuth;
 
 return function( \Slim\App $app):void {
 
-    $app->post('/commandes[/]', CreerCommandeAction::class)
-        ->setName('creer_commande');
+    $app->post('/produits[/]', GetProduitsAction::class)
+        ->setName('list_produits');
 
-    $app->get('/commandes/{id_commande}[/]', AccederCommandeAction::class)
-        ->setName('commande')->add(MiddleAccessCommande::class);
+    $app->get('/produits/{id_produit}[/]', GetProduitByIdAction::class)
+        ->setName('produit');
 
-    $app->patch('/commandes/{id_commande}[/]', ValiderCommandeAction::class)
-        ->setName('valider_commande');
+    $app->patch('/categories/{id_categories}/produits[/]', GetProduitByCategorieAction::class)
+        ->setName('cat_produits');
 
-
-    $app->add(MiddleAuth::class);
 
     $app->options('/{routes:.+}', function ($request, $response, $args) {
         return $response; // Renvoie une réponse HTTP vide
