@@ -3,6 +3,7 @@
 namespace pizzashop\cat\domain\entities;
 
 use pizzashop\cat\domain\dto\ProduitDTO;
+use pizzashop\cat\domain\entities\Taille;
 
 class Produit extends \Illuminate\database\eloquent\Model
 {
@@ -27,8 +28,10 @@ class Produit extends \Illuminate\database\eloquent\Model
     public function toDTO():ProduitDTO
     {
         return new ProduitDTO(
+            $this->id,
             $this->numero,
             $this->libelle,
+            $this->description,
             $this->categorie->libelle,
             $this->tailles->libelle,
             $this->tailles->tarif

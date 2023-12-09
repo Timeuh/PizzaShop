@@ -10,16 +10,16 @@ use pizzashop\cat\domain\exception\ProduitNonTrouveeException;
 
 class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
 
-    public function getProduit(int $num, int $taille): ProduitDTO {
+    public function getProduit(int $id, int $taille): ProduitDTO {
         try {
-            $produit = Produit::where('numero', $num)
+            $produit = Produit::findOrFail($id)
                 ->whereHas('tailles', function ($query) use ($taille) {
                     $query->where('taille_id', $taille);
                 })
                 ->with('categorie', 'tailles')
                 ->firstOrFail();
         } catch (ModelNotFoundException $e) {
-            throw new ProduitNonTrouveeException($num);
+            throw new ProduitNonTrouveeException($id);
         }
         return new ProduitDTO(
             $produit->id,

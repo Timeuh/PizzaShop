@@ -1,6 +1,8 @@
 <?php
 
-namespace pizzashop\domain\entities\catalogue;
+namespace pizzashop\cat\domain\entities;
+
+use pizzashop\cat\domain\entities\Produit;
 
 class Taille extends \Illuminate\Database\Eloquent\Model
 {
