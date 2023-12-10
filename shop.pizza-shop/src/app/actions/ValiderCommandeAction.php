@@ -66,7 +66,7 @@ class ValiderCommandeAction extends AbstractAction
                     $commandeValidee = $this->serviceCommande->validerCommande($idCommande);
                     // En cas de succès, retourner une réponse formatée
                     $responseJson = [
-                        'message' => 'Commande validée avec succès',
+                        'message' => 'commande validée avec succès',
                         'id_commande' => $idCommande,
                         'etat' => 'etat : ' . $commandeValidee->etat,
                     ];

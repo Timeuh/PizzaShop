@@ -1,26 +1,45 @@
 <?php
 declare(strict_types=1);
 
-use pizzashop\shop\app\actions\AccederCommandeAction;
-use pizzashop\shop\app\actions\CreerCommandeAction;
-use pizzashop\shop\app\actions\ValiderCommandeAction;
-use pizzashop\shop\app\middlewares\MiddleAccessCommande;
-use pizzashop\shop\app\middlewares\MiddleAuth;
 
-return function( \Slim\App $app):void {
+use pizzashop\gate\app\actions\catalogue\GetProduitByCategorieAction;
 
+return function(\Slim\App $app):void {
+
+    //COMMANDE
     $app->post('/commandes[/]', CreerCommandeAction::class)
         ->setName('creer_commande');
 
     $app->get('/commandes/{id_commande}[/]', AccederCommandeAction::class)
-        ->setName('commande')->add(MiddleAccessCommande::class);
+        ->setName('commande');
 
     $app->patch('/commandes/{id_commande}[/]', ValiderCommandeAction::class)
         ->setName('valider_commande');
 
 
-    $app->add(MiddleAuth::class);
+    //CATALOGUE
+    $app->get('/produits[/]', GetProduitsAction::class)
+        ->setName('list_produits');
 
+    $app->get('/produits/{id_produit}[/]', GetProduitByIdAction::class)
+        ->setName('produit');
+
+    $app->get('/categories/{id_categorie}/produits[/]', GetProduitByCategorieAction::class)
+        ->setName('cat_produits');
+
+
+    //AUTH
+    $app->post("/api/users/signin",SignInAction::class)
+        ->setName("signIn");
+
+    $app->post('/api/users/refresh', UserRefreshAction::class)
+        ->setName('refreshUser');
+
+    $app->get('/api/users/validate', ValiderTokenJWTAction::class)
+        ->setName('validateTokenJWT');
+
+
+    //CORS
     $app->options('/{routes:.+}', function ($request, $response, $args) {
         return $response; // Renvoie une réponse HTTP vide
     });
