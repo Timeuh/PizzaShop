@@ -1,6 +1,7 @@
 <?php
 
 
+use pizzashop\cat\app\actions\GetProduitByCategorieAction;
 use pizzashop\cat\app\actions\GetProduitByIdAction;
 use pizzashop\cat\app\actions\GetProduitsAction;
 use Psr\Container\ContainerInterface;
@@ -13,6 +14,10 @@ return[
 
     GetProduitByIdAction::class => function (ContainerInterface $c){
         return new GetProduitByIdAction($c->get('catalogue.service'));
+    },
+
+    GetProduitByCategorieAction::class => function (ContainerInterface $c){
+        return new GetProduitByCategorieAction($c->get('catalogue.service'));
     },
 
 ];

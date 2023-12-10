@@ -4,7 +4,9 @@ namespace pizzashop\cat\domain\service;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use pizzashop\cat\domain\dto\ProduitDTO;
+use pizzashop\cat\domain\entities\Categorie;
 use pizzashop\cat\domain\entities\Produit;
+use pizzashop\cat\domain\exception\CategorieNonTrouveeException;
 use pizzashop\cat\domain\exception\ProduitNonTrouveeException;
 
 
@@ -34,15 +36,28 @@ class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
 
     public function getProduitsParCategorie($categorie): array {
         try {
-            $produits = Produit::where('categorie', $categorie)->get();
+            $cat = Categorie::findOrFail($categorie);
+            $produits = Produit::where('categorie_id', $categorie)->get();
         } catch (ModelNotFoundException $e) {
-            throw new Exception("Aucun produit trouvé");
+            throw new CategorieNonTrouveeException($categorie);
         }
-        $produitsDTO = [];
+        if (!$produits){
+            return ['Aucun produit'];
+        }else {
+            $produitsDTO = [];
+        }
         foreach ($produits as $produit) {
-            $produitsDTO[] = new ProduitDTO($produit->id, $produit->nom, $produit->description, $produit->prix, $produit->taille);
+            $produitsDTO[] = new ProduitDTO(
+                $produit->id,
+                $produit->numero,
+                $produit->libelle,
+                $produit->description,
+                "",
+                "",
+                0
+            );
         }
-        return $produitsDTO;
+        return ['cat'=>$cat,"produits"=>$produitsDTO];
 
     }
 
