@@ -40,7 +40,6 @@ class GetProduitByCategorieAction extends AbstractAction {
             'type' => 'resource',
             'categorie' => $produits['cat']->libelle,
         ];
-        var_dump($produits);
         foreach ($produits['produits'] as $p){
             $data['Produits'][] = [
                 'Produit'=>[

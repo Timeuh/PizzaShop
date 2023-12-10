@@ -2,59 +2,59 @@
 
 namespace pizzashop\shop\domain\service\catalogue;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use pizzashop\shop\domain\dto\catalogue\ProduitDTO;
-use pizzashop\shop\domain\entities\catalogue\Produit;
+use pizzashop\shop\domain\dto\ProduitDTO;
 use pizzashop\shop\domain\exception\ProduitNonTrouveeException;
 
 
 class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
 
+    private Client $client;
+
+    /**
+     * @param Client $client
+     */
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
     public function getProduit(int $num, int $taille): ProduitDTO {
+
         try {
-            $produit = Produit::where('numero', $num)
-                ->whereHas('tailles', function ($query) use ($taille) {
-                    $query->where('taille_id', $taille);
-                })
-                ->with('categorie', 'tailles')
-                ->firstOrFail();
-        } catch (ModelNotFoundException $e) {
+            $check = $this->client->get('/produits/'.$num);
+            $produitJson = json_decode($check->getBody(), true);
+            $taille_libelle="normale";
+            if ($taille==2){
+                $taille_libelle="grande";
+            }
+            $info = $produitJson['produit'];
+            return new ProduitDTO($info['id'],$info['numero'],
+                $info['libelle'],$info['description'],$info['categorie'],
+                $taille_libelle,$info['taille'][$taille_libelle]['tarif']);
+        } catch (Exception $e) {
             throw new ProduitNonTrouveeException($num);
         }
-        return new ProduitDTO(
-            $produit->numero,
-            $produit->libelle,
-            $produit->categorie->libelle,
-            $produit->tailles[$taille-1]->libelle,
-            $produit->tailles[$taille-1]->pivot->tarif,
-        );
     }
 
     public function getProduitsParCategorie($categorie): array {
         try {
-            $produits = Produit::where('categorie', $categorie)->get();
+            $check = $this->client->get('/categorie/'.$categorie.'/produits');
+            return json_decode($check->getBody(), true);
         } catch (ModelNotFoundException $e) {
             throw new Exception("Aucun produit trouvé");
         }
-        $produitsDTO = [];
-        foreach ($produits as $produit) {
-            $produitsDTO[] = new ProduitDTO($produit->id, $produit->nom, $produit->description, $produit->prix, $produit->taille);
-        }
-        return $produitsDTO;
 
     }
 
     public function getAllProduct(): array {
         try {
-            $produits = Produit::all();
+            $check = $this->client->get('/produits/');
+            return json_decode($check->getBody(), true);
         } catch (ModelNotFoundException $e) {
             throw new Exception("Aucun produit trouvé");
         }
-        $produitsDTO = [];
-        foreach ($produits as $produit) {
-            $produitsDTO[] = new ProduitDTO($produit->id, $produit->nom, $produit->description, $produit->prix, $produit->taille);
-        }
-        return $produitsDTO;
     }
 
 }

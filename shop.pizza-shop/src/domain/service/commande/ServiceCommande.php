@@ -48,7 +48,8 @@ class ServiceCommande implements ICommander
         }catch (ValidationException $e){
             throw new ValidationCommandeException($e);
         }
-        $creation->id = Uuid::uuid4()->toString();
+        $id = Uuid::uuid4()->toString();
+        $creation->id = $id;
         $creation->date_commande = date("Y-m-d H:i:s");
         $creation->etat = 1;
         $creation->delai = 0;
@@ -73,7 +74,7 @@ class ServiceCommande implements ICommander
                     $item->libelle = $infoItem->libelle_produit;
                     $item->libelle_taille = $infoItem->libelle_taille;
                     $item->tarif = $infoItem->tarif;
-                }catch (ValidationException $e){
+                }catch (Exception $e){
                     throw new ValidationCommandeException($e);
                 }
                 $creation->items[] = $item;
@@ -82,8 +83,9 @@ class ServiceCommande implements ICommander
             throw new ValidationCommandeException($e);
         }
         $creation->calculerMontant();
+        $dto = $creation->toDTO();
         $creation->save();
-        return $creation->toDTO();
+        return $dto;
     }
 
     /**

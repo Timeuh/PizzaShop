@@ -10,7 +10,7 @@ return function( \Slim\App $app):void {
     $app->get('/produits[/]', GetProduitsAction::class)
         ->setName('list_produits');
 
-    $app->get('/produit/{id_produit}[/]', GetProduitByIdAction::class)
+    $app->get('/produits/{id_produit}[/]', GetProduitByIdAction::class)
         ->setName('produit');
 
     $app->get('/categories/{id_categorie}/produits[/]', GetProduitByCategorieAction::class)
