@@ -58,9 +58,10 @@ class ClientApi
 
             $response = $this->client->post($url, $options);
 
+
             return $response->getBody()->getContents();
 
-        } catch (GuzzleException|RequestException $e) {
+        } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
                 $statusCode = $response->getStatusCode();

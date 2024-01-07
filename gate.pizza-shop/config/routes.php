@@ -2,9 +2,15 @@
 declare(strict_types=1);
 
 
+use pizzashop\gate\app\actions\authentification\UserRefreshAction;
+use pizzashop\gate\app\actions\authentification\ValiderTokenJWTAction;
 use pizzashop\gate\app\actions\catalogue\GetProduitsAction;
 use pizzashop\gate\app\actions\catalogue\GetProduitByCategorieAction;
 use pizzashop\gate\app\actions\catalogue\GetProduitByIdAction;
+use pizzashop\gate\app\actions\commande\AccederCommandeAction;
+use pizzashop\gate\app\actions\authentification\SignInAction;
+use pizzashop\gate\app\actions\commande\CreerCommandeAction;
+use pizzashop\gate\app\actions\commande\ValiderCommandeAction;
 
 return function(\Slim\App $app):void {
 
