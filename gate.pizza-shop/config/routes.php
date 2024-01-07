@@ -2,7 +2,9 @@
 declare(strict_types=1);
 
 
+use pizzashop\gate\app\actions\catalogue\GetProduitsAction;
 use pizzashop\gate\app\actions\catalogue\GetProduitByCategorieAction;
+use pizzashop\gate\app\actions\catalogue\GetProduitByIdAction;
 
 return function(\Slim\App $app):void {
 
