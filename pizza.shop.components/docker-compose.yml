@@ -4,14 +4,16 @@ networks:
     driver: bridge
 services:
 
-  # service api.pizza-shop : api pour la prise de commandes
-  #
-  api.pizza-shop:
+  #############################
+  ##       API COMMANDE       #
+  #############################
+
+  # service  api.commande.pizza-shop: api pour la prise de commandes
+  api.commande.pizza-shop:
     image: 'canals/php:latest'
     env_file: ./shop.env
     ports:
       - '2080:80'
-      - '1443:443'
     volumes:
       - ../shop.pizza-shop/public:/var/www/html
       - ../shop.pizza-shop:/var/www
@@ -22,12 +24,10 @@ services:
           - api.pizza-shop.local
     depends_on:
       - pizza-shop.commande.db
-      - pizza-shop.catalogue.db
 
 
 
-  # service sql pour le stockage des commandes -
-  # utilisé par l'api order
+  # service sql pour le stockage des commandes utilisé par l'api order
   pizza-shop.commande.db:
     image: 'mariadb:latest'
     command: '--default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci'
@@ -39,8 +39,28 @@ services:
     volumes:
       - ../shop.pizza-shop/sql:/var/sql
 
-  # service sql pour le catalogue des pizzas -
-  # utilisé par l'api order
+  #############################
+  #       API CATALOGUE       #
+  #############################
+
+  # service  api.catalogue.pizza-shop : pour le catalogue
+  api.catalogue.pizza-shop:
+    image: 'canals/php:latest'
+    env_file: ./cat.env
+    ports:
+      - '2180:80'
+    volumes:
+      - ../cat.pizza-shop/public:/var/www/html
+      - ../cat.pizza-shop:/var/www
+    working_dir: /var/www/
+    networks:
+      pizza-shop.net:
+        aliases:
+          - api.pizza-shop.local
+    depends_on:
+      - pizza-shop.catalogue.db
+
+  # service sql pour le catalogue des pizzas utilisé par l'api order
   pizza-shop.catalogue.db:
     image: 'postgres:latest'
     env_file: ./cat.env
@@ -50,27 +70,16 @@ services:
       - pizza-shop.net
     volumes:
       - ../shop.pizza-shop/sql:/var/sql'
-  #
-  # service administration des bases sql
-  #
-  adminer:
-    image: adminer
-    ports:
-      - '8080:8080'
-    networks:
-      - pizza-shop.net
 
-  ######################################
-  ###  AUTH Service : service d'authentification JWT
-  ###  api api.auth : auth, check, refresh de token JWT
-  ###  utilise sa propre base de données
-  ######################################
-  api.pizza-auth:
+  #############################
+  #         API AUTH          #
+  #############################
+
+  api.auth.pizza-shop:
     image: 'canals/php:latest'
     env_file: ./auth.env
     ports:
       - '2780:80'
-      - '2743:443'
     volumes:
       - ../auth.pizza-shop/public:/var/www/html
       - ../auth.pizza-shop:/var/www
@@ -93,6 +102,39 @@ services:
       - pizza-shop.net
     volumes:
       - ../auth.pizza-shop/sql:/var/sql
+
+  #############################
+  #        API GATEWAY        #
+  #############################
+
+  api.gateway.pizza-shop:
+    image: 'canals/php:latest'
+    env_file: ./cat.env
+    ports:
+      - '2280:80'
+    volumes:
+      - ../gate.pizza-shop/public:/var/www/html
+      - ../gate.pizza-shop:/var/www
+    working_dir: /var/www/
+    networks:
+      pizza-shop.net:
+        aliases:
+          - api.pizza-shop.local
+    depends_on:
+      - pizza-shop.catalogue.db
+
+  ########################################
+  # service administration des bases sql #
+  ########################################
+  adminer:
+    image: adminer
+    ports:
+      - '8080:8080'
+    networks:
+      - pizza-shop.net
+
+
+
 
 
 

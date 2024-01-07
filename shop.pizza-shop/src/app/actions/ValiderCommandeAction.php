@@ -5,6 +5,7 @@ namespace pizzashop\shop\app\actions;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\service\commande\ICommander;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
@@ -17,7 +18,7 @@ class ValiderCommandeAction extends AbstractAction
     {
         $this->serviceCommande = $s;
     }
-    public function __invoke(Request $request, Response $response, $args)
+    public function __invoke(ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, $args) : Response
     {
             // Récupérer l'ID de la commande depuis les paramètres de l'URL
         $idCommande = $args['id_commande'];
@@ -66,7 +67,7 @@ class ValiderCommandeAction extends AbstractAction
                     $commandeValidee = $this->serviceCommande->validerCommande($idCommande);
                     // En cas de succès, retourner une réponse formatée
                     $responseJson = [
-                        'message' => 'Commande validée avec succès',
+                        'message' => 'commande validée avec succès',
                         'id_commande' => $idCommande,
                         'etat' => 'etat : ' . $commandeValidee->etat,
                     ];

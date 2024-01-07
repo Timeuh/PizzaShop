@@ -4,10 +4,10 @@ namespace pizzashop\shop\domain\service\commande;
 
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use pizzashop\shop\domain\dto\commande\CommandeDTO;
-use pizzashop\shop\domain\entities\commande\Commande;
-use pizzashop\shop\domain\entities\commande\EtatCommande;
-use pizzashop\shop\domain\entities\commande\Item;
+use pizzashop\shop\domain\dto\CommandeDTO;
+use pizzashop\shop\domain\entities\Commande;
+use pizzashop\shop\domain\entities\EtatCommande;
+use pizzashop\shop\domain\entities\Item;
 use pizzashop\shop\domain\exception\CommandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
@@ -48,7 +48,8 @@ class ServiceCommande implements ICommander
         }catch (ValidationException $e){
             throw new ValidationCommandeException($e);
         }
-        $creation->id = Uuid::uuid4()->toString();
+        $id = Uuid::uuid4()->toString();
+        $creation->id = $id;
         $creation->date_commande = date("Y-m-d H:i:s");
         $creation->etat = 1;
         $creation->delai = 0;
@@ -73,7 +74,7 @@ class ServiceCommande implements ICommander
                     $item->libelle = $infoItem->libelle_produit;
                     $item->libelle_taille = $infoItem->libelle_taille;
                     $item->tarif = $infoItem->tarif;
-                }catch (ValidationException $e){
+                }catch (Exception $e){
                     throw new ValidationCommandeException($e);
                 }
                 $creation->items[] = $item;
@@ -82,8 +83,9 @@ class ServiceCommande implements ICommander
             throw new ValidationCommandeException($e);
         }
         $creation->calculerMontant();
+        $dto = $creation->toDTO();
         $creation->save();
-        return $creation->toDTO();
+        return $dto;
     }
 
     /**
@@ -107,9 +109,9 @@ class ServiceCommande implements ICommander
 
             $commande->update(['etat' => EtatCommande::ETAT_VALIDE]);
 
-            $this->logger->info('Etat Commande : la commande '.$id.' est désormais validée.');
+            $this->logger->info('Etat commande : la commande '.$id.' est désormais validée.');
         } catch (ModelNotFoundException $e)  {
-            $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.
+            $this->logger->error('Aucune commande Erreur : il n\'y a pas de commande avec l\'id '.$id.
                 '.');
             throw new CommandeNonTrouveeException($id);
         }
@@ -129,10 +131,10 @@ class ServiceCommande implements ICommander
             $commande = Commande::findOrFail($id);
 
         } catch (ModelNotFoundException $e)  {
-            $this->logger->error('Aucune Commande Erreur : il n\'y a pas de commande avec l\'id '.$id.'.');
+            $this->logger->error('Aucune commande Erreur : il n\'y a pas de commande avec l\'id '.$id.'.');
             throw new CommandeNonTrouveeException($id);
         }
-        $this->logger->info('Commande : récupération de la commande id '.$id.'.');
+        $this->logger->info('commande : récupération de la commande id '.$id.'.');
         return $commande->toDTO();
     }
 }

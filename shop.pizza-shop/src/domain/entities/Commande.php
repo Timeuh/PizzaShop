@@ -1,8 +1,8 @@
 <?php
 
-namespace pizzashop\shop\domain\entities\commande;
+namespace pizzashop\shop\domain\entities;
 
-use pizzashop\shop\domain\dto\commande\CommandeDTO;
+use pizzashop\shop\domain\dto\CommandeDTO;
 
 class Commande extends \Illuminate\Database\Eloquent\Model {
     protected $connection = 'commande';

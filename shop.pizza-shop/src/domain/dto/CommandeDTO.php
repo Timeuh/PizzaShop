@@ -1,9 +1,8 @@
 <?php
 
-namespace pizzashop\shop\domain\dto\commande;
+namespace pizzashop\shop\domain\dto;
 
 use DateTime;
-use pizzashop\shop\domain\dto\DTO;
 
 class CommandeDTO extends DTO {
     public string $id;

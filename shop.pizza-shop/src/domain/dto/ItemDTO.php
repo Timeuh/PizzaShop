@@ -1,8 +1,6 @@
 <?php
 
-namespace pizzashop\shop\domain\dto\commande;
-
-use pizzashop\shop\domain\dto\DTO;
+namespace pizzashop\shop\domain\dto;
 
 class ItemDTO extends DTO {
     public int $id;

@@ -4,7 +4,7 @@ namespace pizzashop\shop\app\actions;
 
 use Error;
 use Exception;
-use pizzashop\shop\domain\dto\commande\CommandeDTO;
+use pizzashop\shop\domain\dto\CommandeDTO;
 use pizzashop\shop\domain\exception\ServiceCommandeInvalideDonneeException;
 use pizzashop\shop\domain\exception\ValidationCommandeException;
 use pizzashop\shop\domain\service\commande\ICommander;
@@ -27,9 +27,10 @@ class CreerCommandeAction extends AbstractAction {
         $commande = new CommandeDTO($body['type_livraison'], $request->getAttribute('mail'), $body['items']);
 
         try {
-            $commandeCreee = $this->serviceCommande->creerCommande($commande);
-            $response->getBody()->write(json_encode($commandeCreee));
-            return $response->withStatus(201)->withHeader('Content-Type', 'application/json');
+            $commandeCree = $this->serviceCommande->creerCommande($commande);
+            $response->getBody()->write(json_encode($commandeCree));
+            return $response->withStatus(201)->withHeader('Content-Type', 'application/json')
+                ->withHeader('Location','/commandes/'.$commandeCree->id);
         } catch (ServiceCommandeInvalideDonneeException | ValidationCommandeException $e) {
             $responseMessage = array(
                 "message" => "400 Bad Request",

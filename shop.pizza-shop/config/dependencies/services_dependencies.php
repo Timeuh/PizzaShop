@@ -17,7 +17,7 @@ return [
     },
 
     'catalogue.service' => function (ContainerInterface $c) {
-        return new ServiceCatalogue();//pas de logger pour l'instant
+        return new ServiceCatalogue(new Client(['base_uri' => 'http://api.catalogue.pizza-shop', 'timeout' => 5.0]));
     },
 
     'commande.service' => function (ContainerInterface $c) {
@@ -25,5 +25,5 @@ return [
     },
 
     'auth.service' => function (ContainerInterface $c) {
-        return new ServiceAuth(new Client(['base_uri' => 'http://api.pizza-auth', 'timeout' => 5.0]));
+        return new ServiceAuth(new Client(['base_uri' => 'http://api.auth.pizza-shop', 'timeout' => 5.0]));
     },];
