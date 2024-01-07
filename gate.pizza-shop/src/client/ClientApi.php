@@ -61,7 +61,7 @@ class ClientApi
 
             return $response->getBody()->getContents();
 
-        } catch (RequestException $e) {
+        } catch (GuzzleException|RequestException $e) {
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
                 $statusCode = $response->getStatusCode();
