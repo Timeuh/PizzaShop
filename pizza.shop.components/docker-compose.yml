@@ -18,12 +18,19 @@ services:
       - ../shop.pizza-shop/public:/var/www/html
       - ../shop.pizza-shop:/var/www
     working_dir: /var/www/
+    restart: unless-stopped
     networks:
       pizza-shop.net:
         aliases:
           - api.pizza-shop.local
     depends_on:
-      - pizza-shop.commande.db
+      rabbitmq:
+        condition: service_healthy
+      pizza-shop.commande.db :
+        condition: service_started
+
+
+
 
 
 
@@ -133,7 +140,25 @@ services:
     networks:
       - pizza-shop.net
 
+  ########################################
+  # Broker de message RabbitMQ #
+  ########################################
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - '15672:15672' #interface web de gestion et administration
+      - '5672:5672' #api pour publier et consommer des messages
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 8s
+      timeout: 30s
+      retries: 3
+    networks:
+      - pizza-shop.net
+    volumes:
+      - ../rabbitmq.pizza-shop:/var/lib/rabbitmq
+    env_file: ./rab.env
 
 
 
