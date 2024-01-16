@@ -10,7 +10,7 @@ services:
 
   # service  api.commande.pizza-shop: api pour la prise de commandes
   api.commande.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./shop.env
     ports:
       - '2080:80'
@@ -52,7 +52,7 @@ services:
 
   # service  api.catalogue.pizza-shop : pour le catalogue
   api.catalogue.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./cat.env
     ports:
       - '2180:80'
@@ -83,7 +83,7 @@ services:
   #############################
 
   api.auth.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./auth.env
     ports:
       - '2780:80'
@@ -115,7 +115,7 @@ services:
   #############################
 
   api.gateway.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./cat.env
     ports:
       - '2280:80'
