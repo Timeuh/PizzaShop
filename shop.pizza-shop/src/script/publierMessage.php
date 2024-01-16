@@ -21,5 +21,6 @@ $msg_body = [
 ]];
 $channel->basic_publish(new AMQPMessage(json_encode($msg_body)), 'pizzashop', 'nouvelle');
 print "[x] commande publiée : \n";
+print json_encode($msg_body);
 $channel->close();
 $connection->close();
