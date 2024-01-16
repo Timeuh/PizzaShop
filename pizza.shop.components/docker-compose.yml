@@ -27,7 +27,7 @@ services:
       rabbitmq:
         condition: service_healthy
       pizza-shop.commande.db :
-        condition: service_healthy
+        condition: service_started
 
 
 
