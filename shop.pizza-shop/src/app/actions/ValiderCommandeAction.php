@@ -2,6 +2,7 @@
 
 namespace pizzashop\shop\app\actions;
 
+use PhpAmqpLib\Message\AMQPMessage;
 use pizzashop\shop\domain\exception\commandeNonTrouveeException;
 use pizzashop\shop\domain\exception\MauvaisEtatCommandeException;
 use pizzashop\shop\domain\service\commande\ICommander;
@@ -71,6 +72,25 @@ class ValiderCommandeAction extends AbstractAction
                         'id_commande' => $idCommande,
                         'etat' => 'etat : ' . $commandeValidee->etat,
                     ];
+
+                    //rabbitmq
+                    $message_queue = 'nouvelles_commandes';
+                    $connection = new \PhpAmqpLib\Connection\AMQPStreamConnection('rabbitmq', 5672, 'rabbitUser', 'rabbitPass');
+                    $channel = $connection->channel();
+                    $msg_body = [
+                        'id' => $commande->id,
+                        'mail_client' => $commande->mail_client,
+                        'montant_total' => $commande->montant_total,
+                        'date_commande' => $commande->date_commande,
+                        'etat' => $commande->etat,
+                        'delai' => $commande->delai,
+                        'items' => $commande->items
+                    ];
+                    $channel->basic_publish(new AMQPMessage(json_encode($msg_body)), 'pizzashop', 'nouvelle');
+                    print json_encode($msg_body);
+                    $channel->close();
+                    $connection->close();
+                    //fin rabbitmq
 
                     $response->getBody()->write(json_encode($responseJson));
                     return $response->withHeader('Content-Type', 'application/json');
