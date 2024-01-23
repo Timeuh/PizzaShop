@@ -73,7 +73,7 @@ class ValiderCommandeAction extends AbstractAction
                     ];
 
                     $response->getBody()->write(json_encode($responseJson));
-                    return $response->withHeader('Content-Type', 'application/json');
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 } catch (MauvaisEtatCommandeException $e) {
                     $responseMessage = array(
                         "message" => "400 Bad Request",
