@@ -166,7 +166,7 @@ services:
   ########################################
 
   websocket:
-    image: node:20-alpine
+    image: node:alpine
     ports:
       - '5180:3000'
     networks:
@@ -174,5 +174,5 @@ services:
     env_file: ./web.env
     command: sh -c "npm i && npm run watch"
     volumes:
-      - ../websocket.pizza-shop:/usr/app
-    tty: true
+      - ../websocket.pizza-shop:/app
+    working_dir: /app
