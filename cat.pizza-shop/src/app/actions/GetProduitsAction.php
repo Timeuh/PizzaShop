@@ -37,6 +37,19 @@ class GetProduitsAction extends AbstractAction {
             return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }
 
+        if ($produits == null) {
+            $responseMessage = array(
+                "message" => "404 Not Found",
+                "exception" => array(
+                    "type" => "Exception",
+                    "code" => 0,
+                    "message" => "Aucun produit trouvé",
+                ));
+
+            $response->getBody()->write(json_encode($responseMessage));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
+
         $data = [
             'type' => 'resource',
             ];
