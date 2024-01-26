@@ -34,10 +34,20 @@ class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
         );
     }
 
-    public function getProduitsParCategorie($categorie): array {
+    public function getProduitsParCategorie($categorie,?string $key): array {
         try {
             $cat = Categorie::findOrFail($categorie);
-            $produits = Produit::where('categorie_id', $categorie)->get();
+            $produits = Produit::where('categorie_id', $categorie);
+
+            if ($key != null) {
+                $produits->where(function ($query) use ($key) {
+                    $query->whereRaw('LOWER(libelle) like ?', ['%' . strtolower($key) . '%'])
+                        ->orWhereRaw('LOWER(description) like ?', ['%' . strtolower($key) . '%']);
+                });
+            }
+
+            $produits = $produits->get();
+
         } catch (ModelNotFoundException $e) {
             throw new CategorieNonTrouveeException($categorie);
         }
@@ -61,9 +71,15 @@ class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
 
     }
 
-    public function getAllProduct(): array {
+    public function getAllProduct(?string $key): array {
         try {
-            $produits = Produit::all();
+            if ($key!=null){
+                $produits = Produit::whereRaw('LOWER(libelle) like ?', ['%' . strtolower($key) . '%'])
+                    ->orWhereRaw('LOWER(description) like ?', ['%' . strtolower($key) . '%'])->get();
+
+            }else{
+                $produits = Produit::all();
+            }
         } catch (ModelNotFoundException $e) {
             throw new Exception("Aucun produit trouvé");
         }
@@ -80,5 +96,4 @@ class ServiceCatalogue implements IInfoProduit, IBrowserCatalogue {
             ); }
         return $produitsDTO;
     }
-
 }

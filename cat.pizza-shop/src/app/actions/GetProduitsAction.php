@@ -18,8 +18,10 @@ class GetProduitsAction extends AbstractAction {
 
     public function __invoke(Request $request, Response $response, $args): Response {
 
+        $queryParams = $request->getQueryParams();
+        $key = isset($queryParams['s']) ? $queryParams['s'] : null;
         try {
-            $produits = $this->serviceCatalogue->getAllProduct();
+            $produits = $this->serviceCatalogue->getAllProduct($key);
         } catch (Exception $e) {
             $responseMessage = array(
                 "message" => "404 Not Found",
