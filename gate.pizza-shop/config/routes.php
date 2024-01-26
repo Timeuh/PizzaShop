@@ -2,9 +2,7 @@
 declare(strict_types=1);
 
 
-use pizzashop\gate\app\actions\authentification\SignInAction;
-use pizzashop\gate\app\actions\authentification\UserRefreshAction;
-use pizzashop\gate\app\actions\authentification\ValiderTokenJWTAction;
+use pizzashop\gate\app\actions\authentification\MethodAuthentificationAction;
 use pizzashop\gate\app\actions\catalogue\GetCatalogue;
 use pizzashop\gate\app\actions\commande\AccederCommandeAction;
 use pizzashop\gate\app\actions\commande\CreerCommandeAction;
@@ -35,13 +33,13 @@ return function(\Slim\App $app):void {
 
 
     //AUTH
-    $app->post("/api/users/signin",SignInAction::class)
+    $app->post("/api/users/signin", MethodAuthentificationAction::class)
         ->setName("signIn");
 
-    $app->post('/api/users/refresh', UserRefreshAction::class)
+    $app->post('/api/users/refresh', MethodAuthentificationAction::class)
         ->setName('refreshUser');
 
-    $app->get('/api/users/validate', ValiderTokenJWTAction::class)
+    $app->get('/api/users/validate', MethodAuthentificationAction::class)
         ->setName('validateTokenJWT');
 
 

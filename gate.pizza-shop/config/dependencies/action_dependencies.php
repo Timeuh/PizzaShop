@@ -1,6 +1,7 @@
 <?php
 
 
+use pizzashop\gate\app\actions\authentification\MethodAuthentificationAction;
 use pizzashop\gate\app\actions\authentification\SignInAction;
 use pizzashop\gate\app\actions\authentification\UserRefreshAction;
 use pizzashop\gate\app\actions\authentification\ValiderTokenJWTAction;
@@ -19,6 +20,10 @@ return[
         return new GetCatalogue($c->get('catalogue.client'));
     },
 
+    MethodAuthentificationAction::class => function (ContainerInterface $c){
+        return new MethodAuthentificationAction($c->get('auth.client'));
+    },
+
     AccederCommandeAction::class => function (ContainerInterface $c){
         return new AccederCommandeAction($c->get('commande.client'));
     },
@@ -29,18 +34,6 @@ return[
 
     ValiderCommandeAction::class => function (ContainerInterface $c){
         return new ValiderCommandeAction($c->get('commande.client'));
-    },
-
-    SignInAction::class => function (ContainerInterface $c){
-        return new SignInAction($c->get('auth.client'));
-    },
-
-    ValiderTokenJWTAction::class => function (ContainerInterface $c){
-        return new ValiderTokenJWTAction($c->get('auth.client'));
-    },
-
-    UserRefreshAction::class => function (ContainerInterface $c){
-        return new UserRefreshAction($c->get('auth.client'));
     },
 
 
