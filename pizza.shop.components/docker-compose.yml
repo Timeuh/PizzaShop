@@ -161,5 +161,18 @@ services:
     env_file: ./rab.env
 
 
+  ########################################
+  # Serveur node websocket #
+  ########################################
 
-
+  websocket:
+    image: node:20-alpine
+    ports:
+      - '5180:3000'
+    networks:
+      - pizza-shop.net
+    env_file: ./web.env
+    command: sh -c "npm i && npm run watch"
+    volumes:
+      - ../websocket.pizza-shop:/usr/app
+    tty: true
