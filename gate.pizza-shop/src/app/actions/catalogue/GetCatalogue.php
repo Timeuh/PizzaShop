@@ -1,6 +1,6 @@
 <?php
 
-namespace pizzashop\gate\app\actions\authentification;
+namespace pizzashop\gate\app\actions\catalogue;
 
 use pizzashop\gate\app\actions\AbstractAction;
 use pizzashop\gate\client\ClientApi;
@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 
-class UserRefreshAction extends AbstractAction {
+class GetCatalogue extends AbstractAction {
 
     private ClientApi $client;
 
@@ -17,8 +17,7 @@ class UserRefreshAction extends AbstractAction {
     }
 
     public function __invoke(Request $request, Response $response, $args): Response {
-        $headers = $request->getHeaders();
-        $data = $this->client->post('/api/users/refresh',null,$headers);
+        $data = $this->client->get($request->getUri()->getPath(),$request->getQueryParams());
         $response->getBody()->write($data);
         return $response->withHeader('Content-Type', 'application/json');
     }
