@@ -10,7 +10,7 @@ services:
 
   # service  api.commande.pizza-shop: api pour la prise de commandes
   api.commande.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./shop.env
     ports:
       - '2080:80'
@@ -18,12 +18,17 @@ services:
       - ../shop.pizza-shop/public:/var/www/html
       - ../shop.pizza-shop:/var/www
     working_dir: /var/www/
+    restart: unless-stopped
     networks:
       pizza-shop.net:
         aliases:
           - api.pizza-shop.local
     depends_on:
-      - pizza-shop.commande.db
+      rabbitmq:
+        condition: service_healthy
+      pizza-shop.commande.db :
+        condition: service_started
+
 
 
 
@@ -45,7 +50,7 @@ services:
 
   # service  api.catalogue.pizza-shop : pour le catalogue
   api.catalogue.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./cat.env
     ports:
       - '2180:80'
@@ -76,7 +81,7 @@ services:
   #############################
 
   api.auth.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./auth.env
     ports:
       - '2780:80'
@@ -108,7 +113,7 @@ services:
   #############################
 
   api.gateway.pizza-shop:
-    image: 'canals/php:latest'
+    image: 'canals/php:8.2'
     env_file: ./cat.env
     ports:
       - '2280:80'
@@ -133,6 +138,25 @@ services:
     networks:
       - pizza-shop.net
 
+  ########################################
+  # Broker de message RabbitMQ #
+  ########################################
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - '15672:15672' #interface web de gestion et administration
+      - '5672:5672' #api pour publier et consommer des messages
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 8s
+      timeout: 30s
+      retries: 3
+    networks:
+      - pizza-shop.net
+    volumes:
+      - ../rabbitmq.pizza-shop:/var/lib/rabbitmq
+    env_file: ./rab.env
 
 
 
