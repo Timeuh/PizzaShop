@@ -2,13 +2,11 @@
 declare(strict_types=1);
 
 
+use pizzashop\gate\app\actions\authentification\SignInAction;
 use pizzashop\gate\app\actions\authentification\UserRefreshAction;
 use pizzashop\gate\app\actions\authentification\ValiderTokenJWTAction;
-use pizzashop\gate\app\actions\catalogue\GetProduitsAction;
-use pizzashop\gate\app\actions\catalogue\GetProduitByCategorieAction;
-use pizzashop\gate\app\actions\catalogue\GetProduitByIdAction;
+use pizzashop\gate\app\actions\catalogue\GetCatalogue;
 use pizzashop\gate\app\actions\commande\AccederCommandeAction;
-use pizzashop\gate\app\actions\authentification\SignInAction;
 use pizzashop\gate\app\actions\commande\CreerCommandeAction;
 use pizzashop\gate\app\actions\commande\ValiderCommandeAction;
 
@@ -26,13 +24,13 @@ return function(\Slim\App $app):void {
 
 
     //CATALOGUE
-    $app->get('/produits[/]', GetProduitsAction::class)
+    $app->get('/produits[/]', GetCatalogue::class)
         ->setName('list_produits');
 
-    $app->get('/produits/{id_produit}[/]', GetProduitByIdAction::class)
+    $app->get('/produits/{id_produit}[/]', GetCatalogue::class)
         ->setName('produit');
 
-    $app->get('/categories/{id_categorie}/produits[/]', GetProduitByCategorieAction::class)
+    $app->get('/categories/{id_categorie}/produits[/]', GetCatalogue::class)
         ->setName('cat_produits');
 
 

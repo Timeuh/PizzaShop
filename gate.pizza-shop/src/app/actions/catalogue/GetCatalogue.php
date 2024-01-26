@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 
-class GetProduitByIdAction extends AbstractAction {
+class GetCatalogue extends AbstractAction {
 
     private ClientApi $client;
 
@@ -17,10 +17,9 @@ class GetProduitByIdAction extends AbstractAction {
     }
 
     public function __invoke(Request $request, Response $response, $args): Response {
-        $data = $this->client->get('/produits/'.$args['id_produit']);
+        $data = $this->client->get($request->getUri()->getPath(),$request->getQueryParams());
         $response->getBody()->write($data);
-        return
-            $response->withHeader('Content-Type', 'application/json');
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
 }
