@@ -10,10 +10,10 @@ class CommandesService {
     }
 
     async getEtapeCommandeParId(id) {
-        return db.select('etape').from('commande').where('id', id).first();;
+        return db.select('etape').from('commande').where('id', id).first();
     }
 
-    async changerEtatCommande(id, nouvelEtat) {
+    async changerEtatCommande(id) {
         const row = await this.getEtapeCommandeParId(id);
 
         if (!row || row.etape === null) {
