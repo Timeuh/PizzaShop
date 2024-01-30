@@ -6,14 +6,17 @@ const notifyAll = (msg) =>{
       client_socket.send(msg);
   });
 }
+//const clients = [{clientSocket : ...., numCommande: ....} ]
+const clients = [ ]
 server.on('connection', (client_socket) => {
-  client_socket.addEventListener('error', console.error);
-  client_socket.addEventListener('message', (message) => {
-    console.log('received: %s', message);
-    client_socket.send('acknowledge msg : ' + message);
-    notifyAll(message);
+    client_socket.addEventListener('message', (message) => {
+      clients.push({clientSocket: client_socket, numCommande : message.data})
+        client_socket.send('Vous êtes abonné au suivi de la commande numéro : ' + message.data );
+
+        }
+      )
+
+
+
   });
-  client_socket.addEventListener('close', (event) => {
-    console.log('client disconnected ');
-  });
-})
+
