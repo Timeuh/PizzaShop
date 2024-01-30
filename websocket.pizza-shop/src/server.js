@@ -1,12 +1,12 @@
-import WebSocket, { WebSocketServer } from 'ws';
-const server= new WebSocketServer({ port: 3000 , clientTracking: true});
+import { WebSocketServer } from 'ws';
+const server = new WebSocketServer({ port: 3000 , clientTracking: true});
 const notifyAll = (msg) =>{
   server.clients.forEach((client_socket) => {
     if (client_socket.readyState === WebSocket.OPEN)
       client_socket.send(msg);
   });
 }
-server.addEventListener('connection', (client_socket) => {
+server.on('connection', (client_socket) => {
   client_socket.addEventListener('error', console.error);
   client_socket.addEventListener('message', (message) => {
     console.log('received: %s', message);
