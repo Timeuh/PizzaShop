@@ -1,26 +1,37 @@
-// src/services/CommandesService.js
 const db = require('../db');
 
 class CommandesService {
     async getListeCommandes() {
-        const commandes = await db('commande').select('*').orderBy('id', 'desc');
-        return commandes;
+        return db('commande').select('*').orderBy('id', 'desc');
     }
 
     async getCommandeParId(id) {
         return db.select('*').from('commande').where('id', id).first();
     }
 
-    async createCommande(description, etat) {
-        return db('commande').insert({ description, etat });
+    async getEtapeCommandeParId(id) {
+        return db.select('etape').from('commande').where('id', id).first();;
     }
 
-    async updateEtatCommande(id, nouvelEtat) {
-        return db('commande').where('id', id).update({ etat: nouvelEtat });
-    }
+    async changerEtatCommande(id, nouvelEtat) {
+        const row = await this.getEtapeCommandeParId(id);
 
-    async deleteCommande(id) {
-        return await db('commande').where('id', id).del();
+        if (!row || row.etape === null) {
+            return { success: false, error: 'Commande non trouvée' };
+        }
+
+        let nouvelEtatNum = null;
+
+        if (row.etape === 1) {
+            nouvelEtatNum = 2;
+        } else if (row.etape === 2) {
+            nouvelEtatNum = 3;
+        } else {
+            return { success: false, error: 'Changement d\'état non autorisé' };
+        }
+
+        await db('commande').where('id', id).update({ etape: nouvelEtatNum });
+        return { success: true, message: 'État de la commande changé avec succès' };
     }
 }
 
