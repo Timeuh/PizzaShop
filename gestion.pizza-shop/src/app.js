@@ -9,7 +9,10 @@ const port = 3000;
 app.use(CommandesRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('<h1>Routes : </h1><br>' +
+        '<h3>/commandes </h3></br>' +
+        '<h3>/commandes/:id </h3></br>' +
+        '<h3>/commandes/:id/etape </h3>');
 });
 
 // Démarrage du serveur

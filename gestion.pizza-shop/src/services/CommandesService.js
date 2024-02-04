@@ -33,6 +33,10 @@ class CommandesService {
         await db('commande').where('id', id).update({ etape: nouvelEtatNum });
         return { success: true, message: 'État de la commande changé avec succès' };
     }
+
+    async creerCommande() {
+
+    }
 }
 
 module.exports = CommandesService;
