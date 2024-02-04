@@ -18,8 +18,10 @@ class GetProduitsAction extends AbstractAction {
 
     public function __invoke(Request $request, Response $response, $args): Response {
 
+        $queryParams = $request->getQueryParams();
+        $key = isset($queryParams['s']) ? $queryParams['s'] : null;
         try {
-            $produits = $this->serviceCatalogue->getAllProduct();
+            $produits = $this->serviceCatalogue->getAllProduct($key);
         } catch (Exception $e) {
             $responseMessage = array(
                 "message" => "404 Not Found",
@@ -29,6 +31,19 @@ class GetProduitsAction extends AbstractAction {
                     "message" => $e->getMessage(),
                     "file" => $e->getFile(),
                     "line" => $e->getLine()
+                ));
+
+            $response->getBody()->write(json_encode($responseMessage));
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        }
+
+        if ($produits == null) {
+            $responseMessage = array(
+                "message" => "404 Not Found",
+                "exception" => array(
+                    "type" => "Exception",
+                    "code" => 0,
+                    "message" => "Aucun produit trouvé",
                 ));
 
             $response->getBody()->write(json_encode($responseMessage));

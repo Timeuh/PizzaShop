@@ -55,6 +55,6 @@ class SignInAction extends AbstractAction
                 }
         }
 
-        return $response;
+        return $response->withStatus(200)->withHeader('Content-Type', 'application/json');;
     }
 }

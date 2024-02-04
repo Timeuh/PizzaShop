@@ -24,4 +24,3 @@ Gérer les opérations de livraison.
 - Timothée Brindejonc
 - Nathan Melbeck
 - Jules Steelandt
-- Mattheo Termine

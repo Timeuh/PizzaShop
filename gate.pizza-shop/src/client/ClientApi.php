@@ -17,21 +17,26 @@ class ClientApi
         $this->client = new Client($config);
     }
 
-    public function get($url,$data = [],$headers = [])
+    public function get($url, $data = [], $headers = [])
     {
         try {
             $options = [
                 'json' => $data,
-                'headers' => $headers, // Ajoutez les en-têtes reçus de l'API 1
+                'headers' => $headers,
             ];
-            $response = $this->client->get($url,$options);
+
+            if (!empty($data)) {
+                $url .= '?' . http_build_query($data);
+            }
+
+            $response = $this->client->get($url, $options);
             $jsonContents = $response->getBody()->getContents();
 
             $responseData = json_decode($jsonContents, true);
 
             return json_encode($responseData, JSON_PRETTY_PRINT);
 
-        } catch (GuzzleException|RequestException $e) {
+        } catch (GuzzleException | RequestException $e) {
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
                 $statusCode = $response->getStatusCode();
@@ -46,6 +51,7 @@ class ClientApi
             }
         }
     }
+
 
     public function post($url, $data = [], $headers = [])
     {

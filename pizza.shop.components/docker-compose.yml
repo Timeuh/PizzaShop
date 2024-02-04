@@ -32,8 +32,6 @@ services:
 
 
 
-
-
   # service sql pour le stockage des commandes utilisé par l'api order
   pizza-shop.commande.db:
     image: 'mariadb:latest'
@@ -191,6 +189,7 @@ services:
         - pizza-shop.net
     volumes:
         - ../gestion.pizza-shop/sql:/var/sql
+
 
 
 
