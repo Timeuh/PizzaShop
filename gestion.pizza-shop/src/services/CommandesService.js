@@ -1,4 +1,5 @@
 const db = require('../db');
+const { v4: uuidv4 } = require('uuid');
 
 class CommandesService {
     async getListeCommandes() {
@@ -35,7 +36,22 @@ class CommandesService {
     }
 
     async creerCommande() {
+        try {
+            const commandeInseree = await db('commande').insert({
+                delai: 0,
+                id: uuidv4(),
+                date_commande: nouvelleCommande.date_commande,
+                type_livraison: nouvelleCommande.type_livraison,
+                etape: 1, // État 1 / RECUE
+                montant_total: nouvelleCommande.montant_total,
+                mail_client: nouvelleCommande.mail_client,
+            });
 
+            return commandeInseree;
+        } catch (error) {
+            console.error('Erreur lors de la création de la commande:', error);
+            throw error;
+        }
     }
 }
 
