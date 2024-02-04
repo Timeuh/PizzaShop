@@ -40,7 +40,6 @@ class CommandesAction {
                 res.status(404).json({ error: 'Commande non trouvée' });
                 return;
             }
-            publicationService.publishMessage(id,etape)
             res.json({ etape });
         } catch (error) {
             console.error(error);
@@ -57,6 +56,9 @@ class CommandesAction {
                 res.status(400).json({ error: result.error });
                 return;
             }
+
+            const etape = await this.commandesService.getEtapeCommandeParId(id);
+            await this.publicationService.publishMessage(id,etape);
 
             res.json({ message: result.message });
         } catch (error) {
