@@ -1,4 +1,4 @@
-const amqp = require('amqplib');
+import amqp from 'amqplib'
 
 class ConsumeService {
 
@@ -32,4 +32,4 @@ class ConsumeService {
     }
 }
 
-module.exports = ConsumeService;
+export default ConsumeService;

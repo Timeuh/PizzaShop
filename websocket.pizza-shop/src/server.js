@@ -21,6 +21,7 @@ server.on('connection', (client_socket) => {
       )
 });
 
+
 // consomme les messages de mise à jour commande
 consumeService.consumeMessages((error, nouvelleCommande) => {
   if (error) {
