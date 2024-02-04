@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 
-class ValiderTokenJWTAction extends AbstractAction {
+class MethodAuthentificationAction extends AbstractAction {
 
     private ClientApi $client;
 
@@ -18,7 +18,14 @@ class ValiderTokenJWTAction extends AbstractAction {
 
     public function __invoke(Request $request, Response $response, $args): Response {
         $headers = $request->getHeaders();
-        $data = $this->client->get('/api/users/validate',null,$headers);
+        $method = $request->getMethod();
+        $uri = $request->getUri()->getPath();
+        if ($method == 'GET'){
+            $data = $this->client->get($uri,null,$headers);
+        }
+        if ($method == 'POST'){
+            $data = $this->client->post($uri,null,$headers);
+        }
         $response->getBody()->write($data);
         return $response->withHeader('Content-Type', 'application/json');
     }
