@@ -3,7 +3,7 @@ const amqp = require('amqplib');
 class PublicationService {
 
     constructor() {
-        this.rabbitmq = 'amqp://staff:staff@rabbitmq:5672';
+        this.rabbitmq = 'amqp://rabbitUser:rabbitPass@rabbitmq:5672';
         this.queue = 'suivi_commandes'
         this.exchange = 'pizzashop';
         this.routingKey = 'suivi';

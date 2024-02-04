@@ -1,5 +1,5 @@
 class CommandesAction {
-    constructor(commandesService,publicationService) {
+    constructor(commandesService, publicationService) {
         this.commandesService = commandesService;
         this.publicationService = publicationService
     }
@@ -7,6 +7,7 @@ class CommandesAction {
     async listerCommandes(req, res) {
         try {
             const commandes = await this.commandesService.getListeCommandes();
+
             res.json(commandes);
         } catch (error) {
             console.error(error);
@@ -57,8 +58,7 @@ class CommandesAction {
                 return;
             }
 
-            const etape = await this.commandesService.getEtapeCommandeParId(id);
-            await this.publicationService.publishMessage(id,etape);
+            await this.publicationService.publishMessage(id,result.etape);
 
             res.json({ message: result.message });
         } catch (error) {

@@ -31,7 +31,7 @@ class CommandesService {
         }
 
         await db('commande').where('id', id).update({ etape: nouvelEtatNum });
-        return { success: true, message: 'État de la commande changé avec succès' };
+        return { success: true, message: 'État de la commande changé avec succès', etape:nouvelEtatNum };
     }
 
     async creerCommande(commande) {

@@ -4,7 +4,7 @@ class ConsumeService {
 
     constructor(serviceGestionCommandes) {
         this.serviceGestionCommandes = serviceGestionCommandes;
-        this.rabbitmq = 'amqp://staff:staff@rabbitmq:5672';
+        this.rabbitmq = 'amqp://rabbitUser:rabbitPass@rabbitmq:5672';
         this.queue = 'nouvelles_commandes';
     }
 
