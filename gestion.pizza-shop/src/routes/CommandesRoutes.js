@@ -2,10 +2,12 @@
 const express = require('express');
 const CommandesAction = require('../actions/CommandesAction');
 const CommandesService = require('../services/CommandesService');
+const PublicationService = require('../services/PublicationService')
 
 const router = express.Router();
 const commandesService = new CommandesService();
-const commandesAction = new CommandesAction(commandesService);
+const publicationService = new PublicationService();
+const commandesAction = new CommandesAction(commandesService,publicationService);
 
 router.route('/commandes')
     .get((req, res) => commandesAction.listerCommandes(req, res));

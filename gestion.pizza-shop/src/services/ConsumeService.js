@@ -1,7 +1,6 @@
-const db = require('../db');
 const amqp = require('amqplib');
 
-class MessageServices {
+class ConsumeService {
 
     constructor(serviceGestionCommandes) {
         this.serviceGestionCommandes = serviceGestionCommandes;
@@ -37,4 +36,4 @@ class MessageServices {
     }
 }
 
-module.exports = MessageServices;
+module.exports = ConsumeService;

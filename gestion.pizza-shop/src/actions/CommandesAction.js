@@ -1,6 +1,7 @@
 class CommandesAction {
-    constructor(commandesService) {
+    constructor(commandesService,publicationService) {
         this.commandesService = commandesService;
+        this.publicationService = publicationService
     }
 
     async listerCommandes(req, res) {
@@ -39,7 +40,7 @@ class CommandesAction {
                 res.status(404).json({ error: 'Commande non trouvée' });
                 return;
             }
-
+            publicationService.publishMessage(id,etape)
             res.json({ etape });
         } catch (error) {
             console.error(error);
